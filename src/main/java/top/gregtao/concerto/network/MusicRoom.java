@@ -95,7 +95,7 @@ public class MusicRoom {
                 MusicRoom room = new MusicRoom(player.getEntityName());
                 ROOMS.put(room.uuid, room);
                 serverSender("JOI", room.buildArgs(false), player);
-                player.sendMessage(Text.translatable("concerto.room.create", room.uuid));
+                player.sendMessage(Text.translatable("concerto.room.create", room.uuid.toString()));
                 break;
             }
             case "REM": {
@@ -104,7 +104,7 @@ public class MusicRoom {
                     MusicRoom room = Objects.requireNonNull(ROOMS.get(uuid1));
                     room.serverOnRemove(player.getEntityName(), server);
                     ROOMS.remove(uuid1);
-                    player.sendMessage(Text.translatable("concerto.room.remove", uuid1));
+                    player.sendMessage(Text.translatable("concerto.room.remove", uuid1.toString()));
                 } catch (NullPointerException | IllegalArgumentException | IllegalAccessException e) {
                     player.sendMessage(Text.translatable("concerto.room.remove.fail"));
                 }
@@ -116,7 +116,7 @@ public class MusicRoom {
                     MusicRoom room = Objects.requireNonNull(ROOMS.get(uuid1));
                     room.serverOnJoin(player.getEntityName(), server);
                     serverSender("JOI", room.buildArgs(true), player);
-                    player.sendMessage(Text.translatable("concerto.room.join", uuid1));
+                    player.sendMessage(Text.translatable("concerto.room.join", uuid1.toString()));
                 } catch (NullPointerException | IllegalArgumentException e) {
                     player.sendMessage(Text.translatable("concerto.room.join.fail"));
                 }
@@ -128,7 +128,7 @@ public class MusicRoom {
                     MusicRoom room = Objects.requireNonNull(ROOMS.get(uuid1));
                     room.serverOnQuit(player.getEntityName(), server);
                     serverSender("QUI", uuid1.toString(), player);
-                    player.sendMessage(Text.translatable("concerto.room.quit", uuid1));
+                    player.sendMessage(Text.translatable("concerto.room.quit", uuid1.toString()));
                 } catch (NullPointerException | IllegalArgumentException e) {
                     player.sendMessage(Text.translatable("concerto.room.quit.fail"));
                 }
@@ -139,7 +139,6 @@ public class MusicRoom {
                     UUID uuid1 = UUID.fromString(args[1]);
                     MusicRoom room = Objects.requireNonNull(ROOMS.get(uuid1));
                     room.serverOnUpdate(player.getEntityName(), args[2], server);
-                    player.sendMessage(Text.translatable("concerto.room.update", uuid1));
                 } catch (NullPointerException | IllegalArgumentException | IllegalAccessException e) {
                     player.sendMessage(Text.translatable("concerto.room.update.fail"));
                 }
@@ -205,7 +204,6 @@ public class MusicRoom {
         System.out.println(Arrays.toString(args));
         switch (args[0]) {
             case "REM": {
-                player.sendMessage(Text.translatable("concerto.room.remove.client"));
                 CLIENT_ROOM = null;
                 break;
             }
@@ -226,7 +224,7 @@ public class MusicRoom {
                             if (CLIENT_ROOM.pause) MusicPlayer.INSTANCE.pause();
                         });
                     }
-                    player.sendMessage(Text.translatable("concerto.room.join", uuid1));
+                    player.sendMessage(Text.translatable("concerto.room.join", uuid1.toString()));
                 } catch (NullPointerException | IllegalArgumentException e) {
                     player.sendMessage(Text.translatable("concerto.room.join.fail"));
                 }
@@ -237,7 +235,7 @@ public class MusicRoom {
                 try {
                     UUID uuid1 = UUID.fromString(args[1]);
                     if (CLIENT_ROOM.uuid.compareTo(uuid1) == 0) CLIENT_ROOM = null;
-                    player.sendMessage(Text.translatable("concerto.room.quit", uuid1));
+                    player.sendMessage(Text.translatable("concerto.room.quit", uuid1.toString()));
                 } catch (NullPointerException | IllegalArgumentException e) {
                     player.sendMessage(Text.translatable("concerto.room.join.fail"));
                 }
