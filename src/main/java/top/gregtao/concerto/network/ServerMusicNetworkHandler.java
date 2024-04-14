@@ -3,24 +3,19 @@ package top.gregtao.concerto.network;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.block.entity.JukeboxBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import top.gregtao.concerto.ConcertoServer;
 import top.gregtao.concerto.api.MusicJsonParsers;
 import top.gregtao.concerto.command.AuditCommand;
 import top.gregtao.concerto.config.ServerConfig;
 import top.gregtao.concerto.music.meta.music.MusicMetaData;
-import top.gregtao.concerto.player.exp.ConcertoJukeboxBlockEntity;
 import top.gregtao.concerto.util.TextUtil;
 
 import java.util.*;
@@ -29,6 +24,7 @@ public class ServerMusicNetworkHandler {
 
     public static void register() {
         ServerPlayNetworking.registerGlobalReceiver(MusicNetworkChannels.CHANNEL_MUSIC_DATA, ServerMusicNetworkHandler::musicDataReceiver);
+        ServerPlayNetworking.registerGlobalReceiver(MusicNetworkChannels.CHANNEL_MUSIC_ROOM, MusicRoom::serverReceiver);
     }
 
     public static Map<UUID, MusicDataPacket> WAIT_AUDITION = new HashMap<>();
@@ -49,7 +45,7 @@ public class ServerMusicNetworkHandler {
                 if (success) {
                     auditor.sendMessage(Text.translatable("concerto.audit.pass", packet.from, packet.music.getMeta().title()));
                 } else {
-                    auditor.sendMessage(Text.translatable("concerto.share.s2c_failed", uuid));
+                    auditor.sendMessage(Text.translatable("concerto.share.s2c_failed", uuid.toString()));
                 }
                 ConcertoServer.LOGGER.info("Auditor %s passed request from %s: %s to %s"
                         .formatted(auditor.getEntityName(), packet.from, packet.music.getMeta().title(), packet.to));
@@ -58,7 +54,7 @@ public class ServerMusicNetworkHandler {
                     .formatted(packet.from, packet.music.getMeta().title(), packet.to));
             sendS2CAuditionSyncData(uuid, packet, true);
         } else if (auditor != null) {
-            auditor.sendMessage(Text.translatable("concerto.audit.uuid_not_found", uuid));
+            auditor.sendMessage(Text.translatable("concerto.audit.uuid_not_found"));
         }
     }
 
@@ -69,7 +65,7 @@ public class ServerMusicNetworkHandler {
             if (player != null) player.sendMessage(Text.translatable("concerto.share.rejected", title));
         });
         if (auditor != null) auditor.sendMessage(Text.translatable("concerto.audit.reject", "all guys'", "Musics"));
-        ConcertoServer.LOGGER.info("Auditor " + (auditor == null ? "?" : auditor.getEntityName()) + " rejected all request");
+        ConcertoServer.LOGGER.info("Auditor {} rejected all request", auditor == null ? "?" : auditor.getEntityName());
     }
 
     public static void rejectAudition(@Nullable PlayerEntity auditor, UUID uuid) {
@@ -85,7 +81,7 @@ public class ServerMusicNetworkHandler {
                     .formatted(auditor == null ? "???" : auditor.getEntityName(), packet.from, title, packet.to));
             sendS2CAuditionSyncData(uuid, packet, true);
         } else if (auditor != null) {
-            auditor.sendMessage(Text.translatable("concerto.audit.uuid_not_found", uuid));
+            auditor.sendMessage(Text.translatable("concerto.audit.uuid_not_found"));
         }
     }
 
@@ -150,7 +146,7 @@ public class ServerMusicNetworkHandler {
                 PlayerManager playerManager = server.getPlayerManager();
                 if (!playerExist(playerManager, packet.to)) {
                     player.sendMessage(Text.translatable("concerto.share.c2s_player_not_found", packet.to));
-                    ConcertoServer.LOGGER.info("Received a music request from " + player.getEntityName() + " to an unknown player");
+                    ConcertoServer.LOGGER.info("Received a music request from {} to an unknown player", player.getEntityName());
                 } else {
                     packet.from = player.getEntityName();
                     packet.isS2C = true;
@@ -197,20 +193,6 @@ public class ServerMusicNetworkHandler {
         packetByteBuf.writeString(MusicNetworkChannels.HANDSHAKE_STRING + "CallJoin:" + player.getEntityName());
         ServerPlayNetworking.send(player, MusicNetworkChannels.CHANNEL_HANDSHAKE, packetByteBuf);
         sendS2CAllAuditionData(player);
-    }
-
-    public static void broadcastJukeboxEvent(ServerWorld serverWorld, ConcertoJukeboxBlockEntity blockEntity, boolean start) {
-        BlockPos pos = blockEntity.getPos();
-        String posStr = pos.getX() + "_" + pos.getY() + "_" + pos.getZ();
-        PacketByteBuf packetByteBuf = PacketByteBufs.create();
-        packetByteBuf.writeString(MusicNetworkChannels.HANDSHAKE_STRING + "Jukebox:" + posStr +
-                (start ? ":st:" + TextUtil.toBase64(MusicJsonParsers.to(blockEntity.getMusic()).toString()) : ":ed"));
-        List<ServerPlayerEntity> playerList = serverWorld.getServer().getPlayerManager().getPlayerList();
-        playerList.forEach(player -> {
-            if (player.getPos().distanceTo(blockEntity.getPos().toCenterPos()) <= 64) {
-                ServerPlayNetworking.send(player, MusicNetworkChannels.CHANNEL_HANDSHAKE, packetByteBuf);
-            }
-        });
     }
 
     public static boolean playerExist(PlayerManager manager, String name) {

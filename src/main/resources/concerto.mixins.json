@@ -10,9 +10,7 @@
     "ClientLoginNetworkHandlerMixin",
     "GameMenuScreenMixin",
     "MusicTrackerMixin",
-    "SoundManagerAccessor",
-    "SoundManagerMixin",
-    "SoundSystemMixin"
+    "SoundManagerMixin"
   ],
   "server": [
     "PlayerManagerMixin"

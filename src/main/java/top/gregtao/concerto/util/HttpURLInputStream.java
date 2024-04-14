@@ -1,6 +1,5 @@
 package top.gregtao.concerto.util;
 
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import top.gregtao.concerto.ConcertoClient;
 

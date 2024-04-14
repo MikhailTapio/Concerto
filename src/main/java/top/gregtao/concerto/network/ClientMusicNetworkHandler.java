@@ -18,8 +18,6 @@ import top.gregtao.concerto.command.ShareMusicCommand;
 import top.gregtao.concerto.config.ClientConfig;
 import top.gregtao.concerto.music.Music;
 import top.gregtao.concerto.player.MusicPlayer;
-import top.gregtao.concerto.player.exp.ConcertoJukeboxBlockEntity;
-import top.gregtao.concerto.player.exp.ConcertoSoundInstance;
 import top.gregtao.concerto.screen.MusicAuditionScreen;
 import top.gregtao.concerto.util.JsonUtil;
 import top.gregtao.concerto.util.TextUtil;
@@ -33,6 +31,7 @@ public class ClientMusicNetworkHandler {
         ClientPlayNetworking.registerGlobalReceiver(MusicNetworkChannels.CHANNEL_MUSIC_DATA, ClientMusicNetworkHandler::musicDataReceiver);
         ClientPlayNetworking.registerGlobalReceiver(MusicNetworkChannels.CHANNEL_HANDSHAKE, ClientMusicNetworkHandler::playerJoinHandshake);
         ClientPlayNetworking.registerGlobalReceiver(MusicNetworkChannels.CHANNEL_AUDITION_SYNC, ClientMusicNetworkHandler::auditionDataSyncReceiver);
+        ClientPlayNetworking.registerGlobalReceiver(MusicNetworkChannels.CHANNEL_MUSIC_ROOM, MusicRoom::clientReceiver);
     }
 
     public static final Map<UUID, MusicDataPacket> WAIT_CONFIRMATION = new HashMap<>();
@@ -160,18 +159,6 @@ public class ClientMusicNetworkHandler {
                 ConcertoClient.serverAvailable = true;
                 ConcertoClient.LOGGER.info("Concerto has been installed in this server");
             }
-        } else if (args[1].equals("Jukebox")) {
-            if (client.world != null && client.player != null) {
-                String[] pos = args[2].split("_");
-                BlockPos blockPos = new BlockPos(Integer.parseInt(pos[0]), Integer.parseInt(pos[1]), Integer.parseInt(pos[2]));
-                if (client.world.getBlockEntity(blockPos) instanceof ConcertoJukeboxBlockEntity blockEntity) {
-                    if (args[3].equals("st")) {
-                        client.getSoundManager().play(new ConcertoSoundInstance(client.player, blockEntity, MusicJsonParsers.from(TextUtil.fromBase64(args[4]))));
-                    } else {
-                        blockEntity.stopPlaying();
-                    }
-                }
-            }
         }
     }
 
@@ -188,7 +175,7 @@ public class ClientMusicNetworkHandler {
                 if (music != null) MusicAuditionScreen.WAIT_AUDITION.put(UUID.fromString(args[1]), music);
             }
         } catch (IllegalArgumentException e) {
-            ConcertoClient.LOGGER.error("Received an AuditionSyncDataPacket with illegal UUID: " + args[1]);
+            ConcertoClient.LOGGER.error("Received an AuditionSyncDataPacket with illegal UUID: {}", args[1]);
         }
     }
 

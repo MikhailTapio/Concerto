@@ -196,7 +196,9 @@ public class MusicPlayerHandler {
     }
 
     public void removeCurrent() {
-        if (this.currentIndex < this.musicList.size()) {
+        if (this.musicList.size() == 1) {
+            this.clear();
+        } else if (this.currentIndex < this.musicList.size()) {
             this.musicList.remove(this.currentIndex);
         }
     }
