@@ -14,6 +14,7 @@ import top.gregtao.concerto.ConcertoClient;
 import top.gregtao.concerto.api.MusicJsonParsers;
 import top.gregtao.concerto.music.Music;
 import top.gregtao.concerto.music.MusicSource;
+import top.gregtao.concerto.network.MusicRoom;
 import top.gregtao.concerto.util.SilentLogger;
 
 import java.io.IOException;
@@ -107,18 +108,21 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
 
     public void forceResume() {
         this.forcePaused = false;
+        MusicRoom.clientPause(false);
         super.resume();
     }
 
     @Override
     public boolean pause() {
         MusicPlayerHandler.INSTANCE.writeConfig();
+        MusicRoom.clientPause(true);
         return super.pause();
     }
 
     @Override
     public boolean resume() {
         if (this.forcePaused) return false;
+        MusicRoom.clientPause(false);
         return super.resume();
     }
 
@@ -140,7 +144,6 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
     @Override
     public void progress(int nEncodedBytes, long microsecondPosition, byte[] pcmData, Map<String, Object> properties) {
         MusicPlayerHandler.INSTANCE.updateDisplayTexts(microsecondPosition / 1000);
-        MusicPlayerHandler.INSTANCE.progressBytes += pcmData.length;
     }
 
     @Override
@@ -159,7 +162,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
         }
     }
 
-    public void playTempMusic(Music music) {
+    public void playTempMusic(Music music, Runnable callback) {
         run(() -> {
             MusicSource source = music.getMusicSourceOrNull();
             if (source == null) return;
@@ -169,6 +172,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
             MusicPlayerHandler status = MusicPlayerHandler.INSTANCE;
             status.resetInfo();
             status.currentMusic = music;
+            status.currentSource = source;
             status.initMusicStatus();
             status.updateDisplayTexts();
             try {
@@ -180,7 +184,12 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
                 throw new RuntimeException(e);
             }
             this.playNextLock = false;
+            callback.run();
         });
+    }
+
+    public void playTempMusic(Music music) {
+        this.playTempMusic(music, () -> {});
     }
 
     public void playNext(int forward) {
@@ -194,7 +203,6 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
     public void playNext(int forward, Consumer<Integer> callback) {
         run(() -> {
             try {
-                MusicPlayerHandler.INSTANCE.progressBytes = 0;
                 if (!this.started || MusicPlayerHandler.INSTANCE.isEmpty()) {
                     this.started = false;
                     return;
@@ -218,8 +226,10 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
                             return;
                         }
                     }
+                    MusicPlayerHandler.INSTANCE.currentSource = source;
                     source.open(this);
                     this.play();
+                    MusicRoom.clientUpdate(music);
                     callback.accept(MusicPlayerHandler.INSTANCE.getCurrentIndex());
                 }
                 this.playNextLock = this.isPlayingTemp = this.forcePaused = false;

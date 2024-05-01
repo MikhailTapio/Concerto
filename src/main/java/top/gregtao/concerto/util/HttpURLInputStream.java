@@ -63,7 +63,7 @@ public class HttpURLInputStream extends InputStream {
         try {
             this.disconnect();
             this.connect();
-        } catch (IOException e1) {
+        } catch (IOException e) {
             ConcertoClient.LOGGER.error("Failed to reconnect!");
         }
     }

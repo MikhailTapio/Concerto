@@ -33,7 +33,7 @@ import java.util.Objects;
 
 public class NeteaseCloudApiClient extends HttpApiClient {
 
-    public static String APP_VERSION = "2.10.6.200601";
+    public static String APP_VERSION = "3.0.0.Beta";
     public static Map<String, String> HEADERS = Map.of(
             "Referer", "https://music.163.com",
             "Host", "music.163.com",

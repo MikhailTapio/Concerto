@@ -150,5 +150,14 @@
 
   "concerto.hotkey": "Concerto Hotkeys",
   "concerto.hotkey.general_music_list": "Open General playlist",
-  "concerto.hotkey.index": "Open Concerto Index Page"
+  "concerto.hotkey.index": "Open Concerto Index Page",
+
+  "concerto.room.create": "Created a music room, UUID: %s, which has been copied to your clipboard",
+  "concerto.room.remove": "Removed the music room: %s",
+  "concerto.room.remove.fail": "Failed to remove the music room",
+  "concerto.room.join": "Joined the music room: %s",
+  "concerto.room.join.fail": "Failed to join the music room",
+  "concerto.room.quit": "Quited the music room: %s",
+  "concerto.room.quit.fail": "Failed to quit the music room",
+  "concerto.room.update.fail": "Failed to update detailed information of music room"
 }

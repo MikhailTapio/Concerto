@@ -48,7 +48,7 @@ public class QQMusicUser {
             }
             MusicPlayerHandler.loadInThreadPool(playlists);
             return playlists;
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException | NullPointerException e) {
             return List.of();
         }
     }

@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.gregtao.concerto.ConcertoClient;
 import top.gregtao.concerto.network.ClientMusicNetworkHandler;
+import top.gregtao.concerto.network.MusicRoom;
 import top.gregtao.concerto.screen.MusicAuditionScreen;
 
 @Mixin(ClientLoginNetworkHandler.class)
@@ -19,6 +20,7 @@ public class ClientLoginNetworkHandlerMixin {
         ClientMusicNetworkHandler.WAIT_CONFIRMATION.clear();
         ClientMusicNetworkHandler.PLAYING_SONGS.clear();
         MusicAuditionScreen.WAIT_AUDITION.clear();
+        MusicRoom.CLIENT_ROOM = null;
         ConcertoClient.LOGGER.info("Quit server. Server side functions are unavailable now");
     }
 }

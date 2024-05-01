@@ -120,14 +120,14 @@ public class QQMusicApiClient extends HttpApiClient {
     private final Pattern LYRIC_PATTERN = Pattern.compile("MusicJsonCallback_lrc\\(([\\d\\D]+)\\)");
 
     public Pair<Lyrics, Lyrics> getLyrics(String mid) {
-        String url = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?callback=MusicJsonCallback_lrc&pcachetime=" + TextUtil.getCurrentTime() + "&songmid=" + mid + "&g_tk=5381&jsonpCallback=MusicJsonCallback_lrc&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8¬ice=0&platform=yqq&needNewCode=0";
+        String url = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg?callback=MusicJsonCallback_lrc&pcachetime=" + TextUtil.getCurrentTime() + "&songmid=" + mid + "&g_tk=5381&jsonpCallback=MusicJsonCallback_lrc&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8&platform=yqq&needNewCode=0";
         String result = this.openCApi().setFixedReferer("https://y.qq.com").url(url).get().body();
         Matcher matcher = LYRIC_PATTERN.matcher(result);
         if (!matcher.find()) return null;
         result = matcher.group(1);
         JsonObject object = JsonUtil.from(result);
-        Lyrics lyrics1 = new DefaultFormatLyrics().load(new String(Base64.getDecoder().decode(object.get("lyric").getAsString())));
-        Lyrics lyrics2 = new DefaultFormatLyrics().load(new String(Base64.getDecoder().decode(object.get("trans").getAsString())));
+        Lyrics lyrics1 = new DefaultFormatLyrics().load(TextUtil.fromBase64(object.get("lyric").getAsString()));
+        Lyrics lyrics2 = new DefaultFormatLyrics().load(TextUtil.fromBase64(object.get("trans").getAsString()));
         return Pair.of(lyrics1.isEmpty() ? null : lyrics1, lyrics2.isEmpty() ? null : lyrics2);
     }
 

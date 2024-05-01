@@ -21,11 +21,9 @@ public class NeteaseCloudUserScreen extends PageScreen {
     private MetadataListWidget<NeteaseCloudPlaylist> playlistList;
 
     private <T extends WithMetaData> MetadataListWidget<T> initWidget() {
-        MetadataListWidget<T> widget = new MetadataListWidget<>(this.width, 0, 15, this.height - 35, 18,
+        MetadataListWidget<T> widget = new MetadataListWidget<>(this.width, this.height - 55, 20, 18,
                 entry -> MinecraftClient.getInstance().setScreen(new PlaylistPreviewScreen((Playlist) entry.item, this))
         );
-        widget.setRenderBackground(false);
-        widget.setRenderHorizontalShadows(false);
         return widget;
     }
 
@@ -61,8 +59,9 @@ public class NeteaseCloudUserScreen extends PageScreen {
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("concerto.screen.daily_recommendation"),
                 button -> CompletableFuture.supplyAsync(
                         () -> NeteaseCloudApiClient.INSTANCE.getDailyRecommendation()
-                ).thenAccept(playlist -> MinecraftClient.getInstance().setScreen(new PlaylistPreviewScreen(playlist, this)))
-                ).position(this.width / 2 + 10, this.height - 30).size(50, 20).build()
+                ).thenAccept(playlist -> MinecraftClient.getInstance().submitAndJoin(
+                        () -> MinecraftClient.getInstance().setScreen(new PlaylistPreviewScreen(playlist, this)))
+                )).position(this.width / 2 + 10, this.height - 30).size(50, 20).build()
         );
 
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("concerto.screen.play"), button -> {

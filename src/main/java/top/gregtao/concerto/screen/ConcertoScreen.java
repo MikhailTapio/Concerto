@@ -23,7 +23,7 @@ public class ConcertoScreen extends Screen {
 
     @Override
     public void render(DrawContext matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
+        this.renderBackground(matrices, mouseX, mouseY, delta);
         super.render(matrices, mouseX, mouseY, delta);
         matrices.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 5, 0xffffffff);
     }
