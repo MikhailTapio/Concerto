@@ -25,11 +25,9 @@ public class PlaylistPreviewScreen extends ConcertoScreen {
     @Override
     protected void init() {
         super.init();
-        this.widget = new MetadataListWidget<>(this.width, 0, 18, this.height - 35, 18,
+        this.widget = new MetadataListWidget<>(this.width, this.height - 55, 20, 18,
                 entry -> MusicPlayer.INSTANCE.addMusicHere((Music) entry.item, true)
         );
-        this.widget.setRenderHorizontalShadows(false);
-        this.widget.setRenderBackground(false);
         this.addSelectableChild(this.widget);
         MusicPlayer.run(() -> this.widget.reset(this.playlist.getList(), null));
 

@@ -36,7 +36,7 @@ public class NeteaseCloudSearchScreen extends PageScreen {
     private SearchType searchType = SearchType.MUSIC;
 
     private <T extends WithMetaData> MetadataListWidget<T> initListsWidget() {
-        MetadataListWidget<T> widget = new MetadataListWidget<>(this.width, this.height, 38, this.height - 35, 18, entry -> {
+        MetadataListWidget<T> widget = new MetadataListWidget<>(this.width, this.height - 75, 40, 18, entry -> {
             try {
                 switch (this.searchType) {
                     case MUSIC: {
@@ -52,8 +52,6 @@ public class NeteaseCloudSearchScreen extends PageScreen {
                 ConcertoClient.LOGGER.error(e.getMessage());
             }
         });
-        widget.setRenderBackground(false);
-        widget.setRenderHorizontalShadows(false);
         return widget;
     }
 

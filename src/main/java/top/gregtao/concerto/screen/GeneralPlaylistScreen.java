@@ -34,9 +34,7 @@ public class GeneralPlaylistScreen extends ConcertoScreen {
     @Override
     protected void init() {
         super.init();
-        this.widget = new GeneralPlaylistWidget(this.width, this.height, 40, this.height - 35, 18);
-        this.widget.setRenderHorizontalShadows(false);
-        this.widget.setRenderBackground(false);
+        this.widget = new GeneralPlaylistWidget(this.width, this.height - 75, 40, 18);
 
         this.addSelectableChild(this.widget);
 

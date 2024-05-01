@@ -16,13 +16,10 @@ import java.util.UUID;
 
 public class MusicConfirmationScreen extends ConcertoScreen {
 
-    private final MusicWithUUIDListWidget widget;
+    private MusicWithUUIDListWidget widget;
 
     public MusicConfirmationScreen(Screen parent) {
         super(Text.translatable("concerto.screen.confirmation"), parent);
-        this.widget = new MusicWithUUIDListWidget(this.width, 0, 18, this.height - 35, 18);
-        this.widget.setRenderHorizontalShadows(false);
-        this.widget.setRenderBackground(false);
     }
 
     public void refresh() {
@@ -33,6 +30,7 @@ public class MusicConfirmationScreen extends ConcertoScreen {
     @Override
     protected void init() {
         super.init();
+        this.widget = new MusicWithUUIDListWidget(this.width, this.height - 55, 20, 18);
         this.refresh();
         this.addSelectableChild(this.widget);
 

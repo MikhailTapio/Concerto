@@ -2,7 +2,6 @@ package top.gregtao.concerto.screen.widget;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
@@ -17,16 +16,16 @@ public class ConcertoListWidget<T> extends AlwaysSelectedEntryListWidget<Concert
     protected final BiFunction<T, Integer, Text> narrationSupplier;
     private final Consumer<Entry> onDoubleClicked;
 
-    public ConcertoListWidget(int width, int height, int top, int bottom, int itemHeight,
+    public ConcertoListWidget(int width, int height, int top, int itemHeight,
                               BiFunction<T, Integer, Text> narrationSupplier, Consumer<Entry> onDoubleClicked) {
-        super(MinecraftClient.getInstance(), width, height, top, bottom, itemHeight);
+        super(MinecraftClient.getInstance(), width, height, top, itemHeight);
         this.narrationSupplier = narrationSupplier;
         this.onDoubleClicked = onDoubleClicked;
     }
 
-    public ConcertoListWidget(int width, int height, int top, int bottom, int itemHeight,
+    public ConcertoListWidget(int width, int height, int top, int itemHeight,
                               BiFunction<T, Integer, Text> narrationSupplier, Consumer<Entry> onDoubleClicked, int color) {
-        this(width, height, top, bottom, itemHeight, narrationSupplier, onDoubleClicked);
+        this(width, height, top, itemHeight, narrationSupplier, onDoubleClicked);
         this.color = color;
     }
 
@@ -72,15 +71,6 @@ public class ConcertoListWidget<T> extends AlwaysSelectedEntryListWidget<Concert
     @Override
     public int getRowWidth() {
         return this.width - 20;
-    }
-
-    @Override
-    protected int getScrollbarPositionX() {
-        return this.width - 10;
-    }
-
-    @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
     }
 
     public class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> {

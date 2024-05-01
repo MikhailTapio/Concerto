@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.gregtao.concerto.command.AuditCommand;
 import top.gregtao.concerto.config.ServerConfig;
+import top.gregtao.concerto.network.MusicNetworkChannels;
 import top.gregtao.concerto.network.ServerMusicNetworkHandler;
 
 public class ConcertoServer implements ModInitializer {
@@ -16,6 +17,7 @@ public class ConcertoServer implements ModInitializer {
     public void onInitialize() {
         ServerConfig.INSTANCE.readOptions();
         CommandRegistrationCallback.EVENT.register(AuditCommand::register);
+        MusicNetworkChannels.register();
         ServerMusicNetworkHandler.register();
     }
 }

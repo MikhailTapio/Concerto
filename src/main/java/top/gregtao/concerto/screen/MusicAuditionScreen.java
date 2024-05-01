@@ -20,13 +20,10 @@ public class MusicAuditionScreen extends ConcertoScreen {
 
     public static final Map<UUID, Music> WAIT_AUDITION = new HashMap<>();
 
-    private final MusicWithUUIDListWidget widget;
+    private MusicWithUUIDListWidget widget;
 
     public MusicAuditionScreen(Screen parent) {
         super(Text.translatable("concerto.screen.audition"), parent);
-        this.widget = new MusicWithUUIDListWidget(this.width, 0, 18, this.height - 35, 18);
-        this.widget.setRenderHorizontalShadows(false);
-        this.widget.setRenderBackground(false);
     }
 
     private static List<Pair<Music, UUID>> toPairList(Map<UUID, Music> map) {
@@ -40,6 +37,7 @@ public class MusicAuditionScreen extends ConcertoScreen {
     @Override
     protected void init() {
         super.init();
+        this.widget = new MusicWithUUIDListWidget(this.width, this.height - 55, 20, 18);
         this.refresh();
         this.addSelectableChild(this.widget);
 

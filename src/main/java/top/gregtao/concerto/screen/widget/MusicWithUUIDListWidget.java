@@ -10,15 +10,15 @@ import java.util.function.BiFunction;
 
 public class MusicWithUUIDListWidget extends ConcertoListWidget<Pair<Music, UUID>> {
 
-    public MusicWithUUIDListWidget(int width, int height, int top, int bottom, int itemHeight) {
-        this(width, height, top, bottom, itemHeight, (t, index) -> {
+    public MusicWithUUIDListWidget(int width, int height, int top, int itemHeight) {
+        this(width, height, top, itemHeight, (t, index) -> {
             MusicMetaData meta = t.getFirst().getMeta();
             return Text.literal(meta.title() + " - " + meta.getSource());
         }, 0xffffffff);
     }
 
-    public MusicWithUUIDListWidget(int width, int height, int top, int bottom, int itemHeight,
+    public MusicWithUUIDListWidget(int width, int height, int top, int itemHeight,
                                    BiFunction<Pair<Music, UUID>, Integer, Text> narrationSupplier, int color) {
-        super(width, height, top, bottom, itemHeight, narrationSupplier, entry -> {}, color);
+        super(width, height, top, itemHeight, narrationSupplier, entry -> {}, color);
     }
 }

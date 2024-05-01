@@ -10,15 +10,15 @@ import java.util.function.Consumer;
 
 public class MetadataListWidget<T extends WithMetaData> extends ConcertoListWidget<T> {
 
-    public MetadataListWidget(int width, int height, int top, int bottom, int itemHeight, Consumer<Entry> onDoubleClicked) {
-        this(width, height, top, bottom, itemHeight, (t, index) -> {
+    public MetadataListWidget(int width, int height, int top, int itemHeight, Consumer<Entry> onDoubleClicked) {
+        this(width, height, top, itemHeight, (t, index) -> {
             MetaData meta = t.getMeta();
             return Text.literal(meta.title()).append("  ").append(Text.literal(meta.author()).formatted(Formatting.BOLD, Formatting.GRAY));
         }, onDoubleClicked, 0xffffffff);
     }
 
-    public MetadataListWidget(int width, int height, int top, int bottom, int itemHeight,
+    public MetadataListWidget(int width, int height, int top, int itemHeight,
                               BiFunction<T, Integer, Text> narrationSupplier, Consumer<Entry> onDoubleClicked, int color) {
-        super(width, height, top, bottom, itemHeight, narrationSupplier, onDoubleClicked, color);
+        super(width, height, top, itemHeight, narrationSupplier, onDoubleClicked, color);
     }
 }
