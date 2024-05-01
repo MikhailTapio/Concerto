@@ -61,8 +61,9 @@ public class NeteaseCloudUserScreen extends PageScreen {
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("concerto.screen.daily_recommendation"),
                 button -> CompletableFuture.supplyAsync(
                         () -> NeteaseCloudApiClient.INSTANCE.getDailyRecommendation()
-                ).thenAccept(playlist -> MinecraftClient.getInstance().setScreen(new PlaylistPreviewScreen(playlist, this)))
-                ).position(this.width / 2 + 10, this.height - 30).size(50, 20).build()
+                ).thenAccept(playlist -> MinecraftClient.getInstance().submitAndJoin(
+                        () -> MinecraftClient.getInstance().setScreen(new PlaylistPreviewScreen(playlist, this)))
+                )).position(this.width / 2 + 10, this.height - 30).size(50, 20).build()
         );
 
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("concerto.screen.play"), button -> {
