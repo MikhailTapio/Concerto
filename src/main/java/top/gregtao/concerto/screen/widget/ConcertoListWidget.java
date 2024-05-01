@@ -70,7 +70,7 @@ public class ConcertoListWidget<T> extends AlwaysSelectedEntryListWidget<Concert
 
     @Override
     public int getRowWidth() {
-        return this.width - 20;
+        return this.width - 35;
     }
 
     public class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> {
