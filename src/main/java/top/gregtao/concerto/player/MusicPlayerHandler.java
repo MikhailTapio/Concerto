@@ -20,12 +20,13 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class MusicPlayerHandler {
 
     public static MusicPlayerHandler INSTANCE = new MusicPlayerHandler();
 
-    public static int MAX_SIZE = 1500;
+    public static int MAX_SIZE = 10000;
 
     private ArrayList<Music> musicList = new ArrayList<>();
 
@@ -72,7 +73,7 @@ public class MusicPlayerHandler {
         service.shutdown();
         try {
             if (!service.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS)) {
-                throw new Exception();
+                throw new TimeoutException();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

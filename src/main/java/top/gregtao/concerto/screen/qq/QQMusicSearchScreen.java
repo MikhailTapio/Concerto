@@ -36,7 +36,7 @@ public class QQMusicSearchScreen extends PageScreen {
     private SearchType searchType = SearchType.MUSIC;
 
     private <T extends WithMetaData> MetadataListWidget<T> initListsWidget() {
-        MetadataListWidget<T> widget = new MetadataListWidget<>(this.width, this.height - 75, 40, 18, entry -> {
+        return new MetadataListWidget<>(this.width, this.height - 75, 40, 18, entry -> {
             try {
                 switch (this.searchType) {
                     case MUSIC: {
@@ -52,7 +52,6 @@ public class QQMusicSearchScreen extends PageScreen {
                 ConcertoClient.LOGGER.error(e.getMessage());
             }
         });
-        return widget;
     }
 
     public QQMusicSearchScreen(Screen parent) {

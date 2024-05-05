@@ -21,10 +21,9 @@ public class QQMusicUserScreen extends PageScreen {
     private MetadataListWidget<QQMusicPlaylist> playlistList;
 
     private <T extends WithMetaData> MetadataListWidget<T> initWidget() {
-        MetadataListWidget<T> widget = new MetadataListWidget<>(this.width, this.height - 55, 20, 18,
+        return new MetadataListWidget<>(this.width, this.height - 55, 20, 18,
                 entry -> MinecraftClient.getInstance().setScreen(new PlaylistPreviewScreen((Playlist) entry.item, this))
         );
-        return widget;
     }
 
     public QQMusicUserScreen(Screen parent) {

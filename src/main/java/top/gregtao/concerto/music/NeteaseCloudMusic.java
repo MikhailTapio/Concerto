@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
 import net.minecraft.util.StringIdentifiable;
 import top.gregtao.concerto.api.CacheableMusic;
 import top.gregtao.concerto.api.JsonParser;
@@ -117,6 +118,6 @@ public class NeteaseCloudMusic extends Music implements CacheableMusic {
         LOSSLESS,
         HIRES;
 
-        public static final com.mojang.serialization.Codec<Level> CODEC = StringIdentifiable.createCodec(Level::values);
+        public static final Codec<Level> CODEC = StringIdentifiable.createCodec(Level::values);
     }
 }

@@ -282,7 +282,7 @@ public class QQMusicApiClient extends HttpApiClient {
     }
 
     public JsonObject requestSignedApi(String module, String method, String params) throws IOException, URISyntaxException {
-        String data = "{\"comm\":{\"cv\":4747474,\"ct\":24,\"format\":\"json\",\"inCharset\":\"utf-8\",\"outCharset\":\"utf-8\",\"notice\":0,\"platform\":\"yqq.json\",\"needNewCode\":1,\"uin\":\"" + this.getQQUin() + "\",\"g_tk_new_20200303\":" + this.getQQLoginGTK() + ",\"g_tk\":" + this.getQQLoginGTK() + ",\"mesh_devops\":\"DevopsBase\"},\"req_1\":{\"module\":\"" + module + "\",\"method\":\"" + method + "\",\"param\":{" + params + "}}}";
+        String data = "{\"comm\":{\"cv\":4747474,\"ct\":24,\"format\":\"json\",\"inCharset\":\"utf-8\",\"outCharset\":\"utf-8\",\"notice\":0,\"platform\":\"yqq.json\",\"uin\":\"" + this.getQQUin() + "\",\"g_tk_new_20200303\":" + this.getQQLoginGTK() + ",\"g_tk\":" + this.getQQLoginGTK() + ",\"mesh_devops\":\"DevopsBase\"},\"req_1\":{\"module\":\"" + module + "\",\"method\":\"" + method + "\",\"param\":{" + params + "}}}";
         String url = "https://u.y.qq.com/cgi-bin/musics.fcg?_=" + TextUtil.getCurrentTime() + "&sign=" + QQMusicApiEncrypt.Sign.getSign(data);
         JsonObject object = parseJson(this.openUApi().setFixedReferer("https://y.qq.com/").url(url).post(
                 HttpResponse.BodyHandlers.ofString(),
