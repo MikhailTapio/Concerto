@@ -6,19 +6,20 @@ import top.gregtao.concerto.music.Music;
 import top.gregtao.concerto.music.meta.music.MusicMetaData;
 
 import java.util.UUID;
-import java.util.function.BiFunction;
 
 public class MusicWithUUIDListWidget extends ConcertoListWidget<Pair<Music, UUID>> {
 
     public MusicWithUUIDListWidget(int width, int height, int top, int itemHeight) {
-        this(width, height, top, itemHeight, (t, index) -> {
-            MusicMetaData meta = t.getFirst().getMeta();
-            return Text.literal(meta.title() + " - " + meta.getSource());
-        }, 0xffffffff);
+        this(width, height, top, itemHeight, 0xffffffff);
     }
 
-    public MusicWithUUIDListWidget(int width, int height, int top, int itemHeight,
-                                   BiFunction<Pair<Music, UUID>, Integer, Text> narrationSupplier, int color) {
-        super(width, height, top, itemHeight, narrationSupplier, entry -> {}, color);
+    @Override
+    public Text getNarration(int index, Pair<Music, UUID> t) {
+        MusicMetaData meta = t.getFirst().getMeta();
+        return Text.literal(meta.title() + " - " + meta.getSource());
+    }
+
+    public MusicWithUUIDListWidget(int width, int height, int top, int itemHeight, int color) {
+        super(width, height, top, itemHeight, color);
     }
 }

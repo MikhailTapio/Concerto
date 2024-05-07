@@ -26,7 +26,11 @@ import java.util.logging.Logger;
 
 public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
 
-    public static final MusicPlayer INSTANCE = new MusicPlayer(new SilentLogger("player"));
+    public static MusicPlayer INSTANCE = new MusicPlayer(new SilentLogger("player"));
+
+    public static void resetInstance() {
+        INSTANCE = new MusicPlayer(new SilentLogger("player"));
+    }
 
 //    public static MusicPlayer INSTANCE = new MusicPlayer();
 

@@ -16,6 +16,8 @@ import java.util.*;
 
 public class MusicRoom {
 
+    //TODO: optimization required
+
     public static final Map<UUID, MusicRoom> ROOMS = new HashMap<>(); // Server side
 
     public final UUID uuid;

@@ -1,4 +1,4 @@
-package top.gregtao.concerto.util;
+package top.gregtao.concerto.http;
 
 import org.jetbrains.annotations.NotNull;
 import top.gregtao.concerto.ConcertoClient;
@@ -36,7 +36,7 @@ public class HttpURLInputStream extends InputStream {
 
     private HttpURLConnection openNewConnection() throws IOException {
         HttpURLConnection conn = (HttpURLConnection) this.url.openConnection();
-        conn.setConnectTimeout(1000);
+        conn.setConnectTimeout(5000);
         conn.setRequestMethod("GET");
         return conn;
     }
@@ -59,7 +59,7 @@ public class HttpURLInputStream extends InputStream {
     }
 
     private void reconnect() {
-        ConcertoClient.LOGGER.warn("Connection Reset: Trying reconnecting to " + this.url);
+        ConcertoClient.LOGGER.warn("Connection Reset: Trying reconnecting to {}", this.url);
         try {
             this.disconnect();
             this.connect();

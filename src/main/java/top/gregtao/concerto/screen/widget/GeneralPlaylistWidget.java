@@ -7,8 +7,13 @@ import top.gregtao.concerto.player.MusicPlayerHandler;
 public class GeneralPlaylistWidget extends MetadataListWidget<Music> {
 
     public GeneralPlaylistWidget(int width, int height, int top, int itemHeight) {
-        super(width, height, top, itemHeight, entry -> MusicPlayer.INSTANCE.skipTo(entry.index));
+        super(width, height, top, itemHeight);
         this.reset();
+    }
+
+    @Override
+    public void onDoubleClicked(ConcertoListWidget<Music>.Entry entry) {
+        MusicPlayer.INSTANCE.skipTo(entry.index);
     }
 
     public void reset() {
