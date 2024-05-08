@@ -6,7 +6,6 @@ import net.minecraft.util.math.MathHelper;
 import top.gregtao.concerto.ConcertoClient;
 import top.gregtao.concerto.api.LazyLoadable;
 import top.gregtao.concerto.api.MusicJsonParsers;
-import top.gregtao.concerto.music.MusicSource;
 import top.gregtao.concerto.music.lyrics.Lyrics;
 import top.gregtao.concerto.music.meta.music.MusicMetaData;
 import top.gregtao.concerto.enums.OrderType;
@@ -14,6 +13,8 @@ import top.gregtao.concerto.music.Music;
 import top.gregtao.concerto.music.MusicTimestamp;
 import top.gregtao.concerto.util.TextUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -34,7 +35,7 @@ public class MusicPlayerHandler {
 
     public Music currentMusic = null;
 
-    public MusicSource currentSource = null;
+    public InputStream currentSource = null;
 
     public Lyrics currentLyrics = null, currentSubLyrics = null;
 
@@ -75,7 +76,7 @@ public class MusicPlayerHandler {
             if (!service.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS)) {
                 throw new TimeoutException();
             }
-        } catch (Exception e) {
+        } catch (InterruptedException | TimeoutException e) {
             throw new RuntimeException(e);
         }
     }
@@ -94,6 +95,12 @@ public class MusicPlayerHandler {
     }
 
     public void clear() {
+        try {
+            if (this.currentSource != null)
+                this.currentSource.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.resetInfo();
         this.musicList.clear();
         this.orderType = OrderType.NORMAL;

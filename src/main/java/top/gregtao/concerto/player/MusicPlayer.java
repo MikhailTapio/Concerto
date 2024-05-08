@@ -13,11 +13,10 @@ import net.minecraft.text.Text;
 import top.gregtao.concerto.ConcertoClient;
 import top.gregtao.concerto.api.MusicJsonParsers;
 import top.gregtao.concerto.music.Music;
-import top.gregtao.concerto.music.MusicSource;
 import top.gregtao.concerto.network.MusicRoom;
 import top.gregtao.concerto.util.SilentLogger;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -29,6 +28,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
     public static MusicPlayer INSTANCE = new MusicPlayer(new SilentLogger("player"));
 
     public static void resetInstance() {
+        INSTANCE.reset();
         INSTANCE = new MusicPlayer(new SilentLogger("player"));
     }
 
@@ -168,7 +168,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
 
     public void playTempMusic(Music music, Runnable callback) {
         run(() -> {
-            MusicSource source = music.getMusicSourceOrNull();
+            InputStream source = music.getMusicSourceOrNull();
             if (source == null) return;
             this.forcePaused = false;
             this.playNextLock = this.started = true;
@@ -180,10 +180,10 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
             status.initMusicStatus();
             status.updateDisplayTexts();
             try {
-                source.open(this);
+                this.open(source);
                 this.play();
                 this.isPlayingTemp = true;
-            } catch (StreamPlayerException | IOException e) {
+            } catch (StreamPlayerException e) {
                 this.started = this.isPlayingTemp = this.forcePaused = false;
                 throw new RuntimeException(e);
             }
@@ -215,7 +215,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
                 this.stop();
                 Music music = MusicPlayerHandler.INSTANCE.playNext(forward);
                 if (music != null) {
-                    MusicSource source;
+                    InputStream source;
                     ClientPlayerEntity player = MinecraftClient.getInstance().player;
                     while ((source = music.getMusicSourceOrNull()) == null) {
                         if (player != null) {
@@ -231,13 +231,13 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
                         }
                     }
                     MusicPlayerHandler.INSTANCE.currentSource = source;
-                    source.open(this);
+                    this.open(source);
                     this.play();
                     MusicRoom.clientUpdate(music);
                     callback.accept(MusicPlayerHandler.INSTANCE.getCurrentIndex());
                 }
                 this.playNextLock = this.isPlayingTemp = this.forcePaused = false;
-            } catch (StreamPlayerException | IOException e) {
+            } catch (StreamPlayerException e) {
                 this.started = this.isPlayingTemp = this.forcePaused = false;
                 throw new RuntimeException(e);
             }

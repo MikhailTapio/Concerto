@@ -6,12 +6,16 @@ import top.gregtao.concerto.api.CacheableMusic;
 import top.gregtao.concerto.api.JsonParser;
 import top.gregtao.concerto.api.MusicJsonParsers;
 import top.gregtao.concerto.enums.Sources;
+import top.gregtao.concerto.http.HttpClientInputStream;
+import top.gregtao.concerto.http.HttpURLInputStream;
 import top.gregtao.concerto.http.qq.QQMusicApiClient;
 import top.gregtao.concerto.music.lyrics.Lyrics;
 import top.gregtao.concerto.music.meta.music.BasicMusicMetaData;
 import top.gregtao.concerto.music.meta.music.MusicMetaData;
 import top.gregtao.concerto.music.meta.music.UnknownMusicMeta;
+import top.gregtao.concerto.util.FileUtil;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,9 +78,9 @@ public class QQMusic extends Music implements CacheableMusic {
     }
 
     @Override
-    public MusicSource getMusicSource() throws MusicSourceNotFoundException {
+    public InputStream getMusicSource() throws MusicSourceNotFoundException {
         try {
-            return MusicSource.of(new URL(this.getRawPath()));
+            return FileUtil.createBuffered(new HttpURLInputStream(new URL(this.getRawPath())));
         } catch (Exception e) {
             throw new MusicSourceNotFoundException(e);
         }

@@ -48,6 +48,10 @@ public class NeteaseCloudApiClient extends HttpApiClient {
         super(Sources.NETEASE_CLOUD.asString(), HEADERS, Map.of("https://music.163.com", INIT_COOKIES));
     }
 
+    public String getOuterMusicLink(String id) {
+        return "http://music.163.com/song/media/outer/url?id=" + id;
+    }
+
     public JsonObject getMusicLink(String id, NeteaseCloudMusic.Level level) {
         String url = "http://music.163.com/api/song/enhance/player/url/v1?encodeType=mp3&ids=[" + id + "]&level=" + level.asString();
         return parseJson(this.open().url(url).get());

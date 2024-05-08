@@ -4,11 +4,13 @@ import top.gregtao.concerto.api.CacheableMusic;
 import top.gregtao.concerto.api.JsonParser;
 import top.gregtao.concerto.api.MusicJsonParsers;
 import top.gregtao.concerto.enums.Sources;
+import top.gregtao.concerto.http.HttpURLInputStream;
 import top.gregtao.concerto.music.meta.music.TimelessMusicMetaData;
+import top.gregtao.concerto.util.FileUtil;
 import top.gregtao.concerto.util.HttpUtil;
 import top.gregtao.concerto.util.TextUtil;
 
-import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URL;
 
 public class HttpFileMusic extends PathFileMusic implements CacheableMusic {
@@ -18,10 +20,10 @@ public class HttpFileMusic extends PathFileMusic implements CacheableMusic {
     }
 
     @Override
-    public MusicSource getMusicSource() throws MusicSourceNotFoundException {
+    public InputStream getMusicSource() throws MusicSourceNotFoundException {
         try {
-            return MusicSource.of(new URL(this.getRawPath()));
-        } catch (MalformedURLException e) {
+            return FileUtil.createBuffered(new HttpURLInputStream(new URL(this.getRawPath())));
+        } catch (Exception e) {
             throw new MusicSourceNotFoundException(e);
         }
     }
