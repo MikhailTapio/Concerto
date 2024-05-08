@@ -18,7 +18,6 @@ import top.gregtao.concerto.music.lyrics.DefaultFormatLyrics;
 import top.gregtao.concerto.music.lyrics.Lyrics;
 import top.gregtao.concerto.music.meta.music.TimelessMusicMetaData;
 import top.gregtao.concerto.music.meta.music.list.PlaylistMetaData;
-import top.gregtao.concerto.player.MusicPlayer;
 import top.gregtao.concerto.player.MusicPlayerHandler;
 import top.gregtao.concerto.screen.QRCodeRenderer;
 import top.gregtao.concerto.util.HashUtil;
@@ -30,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class NeteaseCloudApiClient extends HttpApiClient {
 
@@ -257,21 +257,21 @@ public class NeteaseCloudApiClient extends HttpApiClient {
                  Text.translatable("concerto.screen.daily_recommendation").getString(), "", ""), false);
     }
 
-    public static Thread CURRENT_THREAD = null;
+    public static CompletableFuture<Void> CURRENT_THREAD = null;
 
     public static void checkQRCodeStatusProgress(PlayerEntity player, String uniKey) {
         if (CURRENT_THREAD != null) {
-            CURRENT_THREAD.interrupt();
+            CURRENT_THREAD.cancel(true);
             return;
         }
-        CURRENT_THREAD = MusicPlayer.run(() -> {
+        CURRENT_THREAD = CompletableFuture.runAsync(() -> {
             try {
                 long wait = 120000;
                 while (wait > 0) {
                     Pair<Integer, String> pair = INSTANCE.getQRCodeStatus(uniKey);
                     int code = pair.getFirst();
                     if (code == 801 || code == 802) {
-                        if (CURRENT_THREAD.isInterrupted()) return;
+                        if (CURRENT_THREAD.isDone()) return;
                         Thread.sleep(1000L);
                         wait -= 1000;
                     } else if (code == 800) {
@@ -282,7 +282,7 @@ public class NeteaseCloudApiClient extends HttpApiClient {
                         LOCAL_USER.updateLoginStatus();
                         break;
                     } else {
-                        ConcertoClient.LOGGER.error("Unknown code " + code + ", it may caused by networking problems.");
+                        ConcertoClient.LOGGER.error("Unknown code {}, it may caused by networking problems.", code);
                         break;
                     }
                 }

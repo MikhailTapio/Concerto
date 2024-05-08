@@ -19,6 +19,7 @@ import top.gregtao.concerto.util.SilentLogger;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -52,10 +53,12 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
         this.addStreamPlayerListener(this);
     }
 
-    public static Thread run(Runnable runnable) {
-        Thread thread = new Thread(runnable, ConcertoClient.MOD_ID);
-        thread.start();
-        return thread;
+    public static void run(Runnable runnable) {
+        CompletableFuture.runAsync(runnable);
+    }
+
+    public static void run(Runnable runnable, Runnable callback) {
+        CompletableFuture.runAsync(runnable).thenRunAsync(callback);
     }
 
     public void addMusic(Music music) {
@@ -63,24 +66,15 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
     }
 
     public void addMusic(Music music, Runnable callback) {
-        run(() -> {
-            MusicPlayerHandler.INSTANCE.addMusic(music);
-            callback.run();
-        });
+        run(() -> MusicPlayerHandler.INSTANCE.addMusic(music), callback);
     }
 
     public void addMusic(List<Music> musics, Runnable callback) {
-        run(() -> {
-            MusicPlayerHandler.INSTANCE.addMusic(musics);
-            callback.run();
-        });
+        run(() -> MusicPlayerHandler.INSTANCE.addMusic(musics), callback);
     }
 
     public void addMusic(Supplier<List<Music>> musicListAdder, Runnable callback) {
-        run(() -> {
-            MusicPlayerHandler.INSTANCE.addMusic(musicListAdder.get());
-            callback.run();
-        });
+        run(() -> MusicPlayerHandler.INSTANCE.addMusic(musicListAdder.get()), callback);
     }
 
     public void addMusicHere(Music music, boolean skip) {
@@ -93,8 +87,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
             if (skip) {
                 this.skipTo(MusicPlayerHandler.INSTANCE.getCurrentIndex() + 1);
             }
-            callback.run();
-        });
+        }, callback);
     }
 
     @Override
@@ -188,8 +181,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
                 throw new RuntimeException(e);
             }
             this.playNextLock = false;
-            callback.run();
-        });
+        }, callback);
     }
 
     public void playTempMusic(Music music) {
@@ -271,8 +263,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
             this.started = false;
             this.stop();
             MusicPlayerHandler.INSTANCE = MusicJsonParsers.fromRaw(ConcertoClient.MUSIC_CONFIG.read());
-            callback.run();
-        });
+        }, callback);
     }
 
     public void cut(Runnable callback) {
@@ -281,8 +272,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
                 MusicPlayerHandler.INSTANCE.removeCurrent();
             }
             this.playNext(0);
-            callback.run();
-        });
+        }, callback);
     }
 
     public void remove(int index, Runnable callback) {
@@ -290,9 +280,8 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
         else {
             run(() -> {
                 MusicPlayerHandler.INSTANCE.remove(index);
-                if (MusicPlayerHandler.INSTANCE.isEmpty()) this.cut(callback);
-                else callback.run();
-            });
+                if (MusicPlayerHandler.INSTANCE.isEmpty()) this.cut(() -> {});
+            }, callback);
         }
     }
 }
