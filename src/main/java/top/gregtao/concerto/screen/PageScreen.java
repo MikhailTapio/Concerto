@@ -5,13 +5,9 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-import java.util.function.Consumer;
-
-public class PageScreen extends ConcertoScreen {
-    private Consumer<Integer> onPageTurned = page -> {};
+public abstract class PageScreen extends ConcertoScreen {
     protected int page = 0, maxPage = Integer.MAX_VALUE, buttonX, buttonY, widgetWidth;
 
     public PageScreen(Text title, Screen parent) {
@@ -25,28 +21,30 @@ public class PageScreen extends ConcertoScreen {
         this.maxPage = maxPage;
     }
 
+    abstract public void onPageTurned(int page);
+
     /**
      * MUST BE CALLED BEFORE super.init()
      */
-    public void configure(Consumer<Integer> onPageTurned, int buttonX, int buttonY) {
-        this.onPageTurned = onPageTurned;
+    private void configure(int buttonX, int buttonY) {
         this.buttonX = buttonX;
         this.buttonY = buttonY;
     }
 
     @Override
     protected void init() {
+        this.configure(this.width / 2 - 120, this.height - 30);
         super.init();
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("concerto.screen.previous_page"), button -> {
             if (this.page > 0) {
                 this.page -= 1;
-                this.onPageTurned.accept(this.page);
+                this.onPageTurned(this.page);
             }
         }).size(20, 20).position(this.buttonX - this.widgetWidth / 2 - 22, this.buttonY).build());
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("concerto.screen.next_page"), button -> {
             if (this.page < this.maxPage) {
                 this.page += 1;
-                this.onPageTurned.accept(this.page);
+                this.onPageTurned(this.page);
             }
         }).size(20, 20).position(this.buttonX + this.widgetWidth / 2, this.buttonY).build());
     }

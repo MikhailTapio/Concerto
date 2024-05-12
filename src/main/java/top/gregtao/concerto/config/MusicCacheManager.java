@@ -32,6 +32,6 @@ public class MusicCacheManager extends CacheManager {
     public void addMusic(CacheableMusic music) throws MusicSourceNotFoundException, IOException, UnsupportedAudioFileException {
         JsonObject json = MusicJsonParsers.to(music.getMusic(), false);
         if (json == null) return;
-        this.addFile(HashUtil.md5(json.toString()) + "." + music.getSuffix(), music.getMusic().getMusicSource().getAudioStream());
+        this.addFile(HashUtil.md5(json.toString()) + "." + music.getSuffix(), music.getMusic().getMusicSource());
     }
 }

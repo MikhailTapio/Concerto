@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import top.gregtao.concerto.config.ClientConfig;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
@@ -75,6 +76,21 @@ public class HttpRequestBuilder {
         return this.setHeader("Content-Type", contentType);
     }
 
+    public HttpResponse<InputStream> openStream() {
+        this.builder.GET();
+        this.setHeaders(this.fixedHeaders);
+        HttpRequest request = this.builder.build();
+        try {
+            HttpResponse<InputStream> response = this.client.getClient().send(request, HttpResponse.BodyHandlers.ofInputStream());
+            this.client.getLogger().info("STREAM {} GET {}", response.statusCode(), this.url);
+            this.client.updateCookie();
+            return response;
+        } catch (IOException | InterruptedException e) {
+            this.client.getLogger().error("ERROR GET STREAM {} : {}", this.url, e.getMessage());
+            return null;
+        }
+    }
+
     public <T> HttpResponse<T> get(HttpResponse.BodyHandler<T> bodyHandler) {
         this.builder.GET();
         this.setHeaders(this.fixedHeaders);
@@ -82,14 +98,14 @@ public class HttpRequestBuilder {
         try {
             HttpResponse<T> response = this.client.getClient().send(request, bodyHandler);
             if (ClientConfig.INSTANCE.options.printRequestResults && bodyHandler == HttpResponse.BodyHandlers.ofString()) {
-                this.client.getLogger().info(response.statusCode() + " GET " + this.url + " : " + response.body());
+                this.client.getLogger().info("{} GET {} : {}", response.statusCode(), this.url, response.body());
             } else {
-                this.client.getLogger().info(response.statusCode() + " GET " + this.url);
+                this.client.getLogger().info("{} GET {}", response.statusCode(), this.url);
             }
             this.client.updateCookie();
             return response;
         } catch (IOException | InterruptedException e) {
-            this.client.getLogger().error("ERROR GET " + this.url + " : " + e.getMessage());
+            this.client.getLogger().error("ERROR GET {} : {}", this.url, e.getMessage());
             return null;
         }
     }
@@ -106,14 +122,14 @@ public class HttpRequestBuilder {
         try {
             HttpResponse<T> response = this.client.getClient().send(request, bodyHandler);
             if (ClientConfig.INSTANCE.options.printRequestResults && bodyHandler == HttpResponse.BodyHandlers.ofString()) {
-                this.client.getLogger().info(response.statusCode() + " POST " + this.url + " - " + data + " : " + response.body());
+                this.client.getLogger().info("{} POST {} - {} : {}", response.statusCode(), this.url, data, response.body());
             } else {
-                this.client.getLogger().info(response.statusCode() + " POST " + this.url);
+                this.client.getLogger().info("{} POST {}", response.statusCode(), this.url);
             }
             this.client.updateCookie();
             return response;
         } catch (IOException | InterruptedException e) {
-            this.client.getLogger().error("ERROR POST " + this.url + " : " + e.getMessage());
+            this.client.getLogger().error("ERROR POST {} : {}", this.url, e.getMessage());
             return null;
         }
     }

@@ -6,7 +6,7 @@ import java.util.*;
 
 public class QQMusicApiEncrypt {
 
-    //    // Source by: https://blog.csdn.net/qq_23594799/article/details/111477320, https://blog.csdn.net/qq_37438485/article/details/124420854
+    //    // Original source by: https://blog.csdn.net/qq_23594799/article/details/111477320, https://blog.csdn.net/qq_37438485/article/details/124420854
     //
     //    private static final String ENCRYPT_STATIC = "CJBPACrRuNy7";
     //    private static final String PREFIX = "zzb";

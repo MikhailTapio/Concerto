@@ -110,6 +110,7 @@ public class MusicCommand {
         ).then(
                 ClientCommandManager.literal("clear").executes(context -> {
                     MusicPlayer.INSTANCE.clear();
+                    MusicPlayer.resetInstance();
                     TextUtil.commandMessageClient(context, Text.translatable("concerto.player.clear"));
                     return 0;
                 })

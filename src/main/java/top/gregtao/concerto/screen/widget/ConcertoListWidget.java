@@ -8,33 +8,31 @@ import net.minecraft.util.Util;
 
 import java.util.List;
 import java.util.ListIterator;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 public class ConcertoListWidget<T> extends AlwaysSelectedEntryListWidget<ConcertoListWidget<T>.Entry> {
     private int color = 0xffffffff;
-    protected final BiFunction<T, Integer, Text> narrationSupplier;
-    private final Consumer<Entry> onDoubleClicked;
 
-    public ConcertoListWidget(int width, int height, int top, int itemHeight,
-                              BiFunction<T, Integer, Text> narrationSupplier, Consumer<Entry> onDoubleClicked) {
+    public ConcertoListWidget(int width, int height, int top, int itemHeight) {
         super(MinecraftClient.getInstance(), width, height, top, itemHeight);
-        this.narrationSupplier = narrationSupplier;
-        this.onDoubleClicked = onDoubleClicked;
     }
 
-    public ConcertoListWidget(int width, int height, int top, int itemHeight,
-                              BiFunction<T, Integer, Text> narrationSupplier, Consumer<Entry> onDoubleClicked, int color) {
-        this(width, height, top, itemHeight, narrationSupplier, onDoubleClicked);
+    public ConcertoListWidget(int width, int height, int top, int itemHeight, int color) {
+        this(width, height, top, itemHeight);
         this.color = color;
     }
+
+    public Text getNarration(int index, T t) {
+        return Text.literal(String.valueOf(index));
+    }
+
+    public void onDoubleClicked(Entry entry) {}
 
     public void reset(List<T> list, T selected, String key) {
         this.clearEntries();
         key = key.toLowerCase();
         for (int i = 0, j = 0; i < list.size(); ++i) {
             T music = list.get(i);
-            if (key.isEmpty() || this.narrationSupplier.apply(music, i).getString().toLowerCase().matches(".*" + key + ".*")) {
+            if (key.isEmpty() || this.getNarration(i, music).getString().toLowerCase().matches(".*" + key + ".*")) {
                 Entry entry = new Entry(music, i, j++);
                 this.addEntry(entry);
                 if (music == selected) {
@@ -88,7 +86,7 @@ public class ConcertoListWidget<T> extends AlwaysSelectedEntryListWidget<Concert
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (button == 0) {
                 if (Util.getMeasuringTimeMs() - this.lastClickTime < 250) {
-                    ConcertoListWidget.this.onDoubleClicked.accept(this);
+                    ConcertoListWidget.this.onDoubleClicked(this);
                 } else {
                     ConcertoListWidget.this.setSelected(this);
                 }
@@ -100,7 +98,7 @@ public class ConcertoListWidget<T> extends AlwaysSelectedEntryListWidget<Concert
 
         @Override
         public Text getNarration() {
-            return ConcertoListWidget.this.narrationSupplier.apply(this.item, this.index);
+            return ConcertoListWidget.this.getNarration(this.index, this.item);
         }
 
         @Override

@@ -1,65 +1,55 @@
-package top.gregtao.concerto.util;
+package top.gregtao.concerto.http;
 
 import org.jetbrains.annotations.NotNull;
 import top.gregtao.concerto.ConcertoClient;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.http.HttpResponse;
 
-public class HttpURLInputStream extends InputStream {
+public class HttpClientInputStream extends InputStream {
 
-    private final URL url;
-    private HttpURLConnection connection;
+    private final String url;
+    private final HttpApiClient connection;
     private InputStream in;
-    private final int szBytes;
+    private int szBytes = 0;
     private int readBytesTotal;
 
-    public HttpURLInputStream(URL url, int startBytePos) throws IOException {
+    public HttpClientInputStream(String url, HttpApiClient client, int startBytePos) throws IOException {
         this.readBytesTotal = startBytePos;
         this.url = url;
-        this.connection = this.openNewConnection();
-        if (this.connection.getResponseCode() == 200) {
-            this.szBytes = this.connection.getContentLength();
-            this.in = this.connection.getInputStream();
+        this.connection = client;
+        HttpResponse<InputStream> response = this.connection.open().url(this.url).openStream();
+        if (response.statusCode() == 206 || response.statusCode() == 200) {
+            response.headers().firstValueAsLong("Content-Length").ifPresent(num -> this.szBytes = (int) num);
+            this.in = response.body();
         } else {
-            String message = this.connection.getResponseCode() + " - couldn't access to: " + url;
-            ConcertoClient.LOGGER.error(message);
-            throw new IOException(message);
+            throw new IOException(String.valueOf(response.statusCode()));
         }
     }
 
-    public HttpURLInputStream(URL url) throws IOException {
-        this(url, 0);
-    }
-
-    private HttpURLConnection openNewConnection() throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) this.url.openConnection();
-        conn.setConnectTimeout(1000);
-        conn.setRequestMethod("GET");
-        return conn;
+    public HttpClientInputStream(String url, HttpApiClient client) throws IOException {
+        this(url, client, 0);
     }
 
     private void disconnect() throws IOException {
         this.in.close();
-        this.connection.disconnect();
     }
 
     private void connect() throws IOException {
-        this.connection = this.openNewConnection();
-        this.connection.setRequestProperty("Range", "bytes=" + this.readBytesTotal + "-" + this.szBytes);
-        if (this.connection.getResponseCode() == 206 || this.connection.getResponseCode() == 200) {
-            this.in = this.connection.getInputStream();
+        HttpResponse<InputStream> response = this.connection.open().url(this.url)
+                .setHeader("Range", "bytes=" + this.readBytesTotal + "-" + this.szBytes).openStream();
+        if (response.statusCode() == 206 || response.statusCode() == 200) {
+            this.in = response.body();
         } else {
-            String message = this.connection.getResponseCode() + " - cannot access to url: " + url;
+            String message = response.statusCode() + " - cannot access to url: " + url;
             ConcertoClient.LOGGER.error(message);
             throw new IOException(message);
         }
     }
 
     private void reconnect() {
-        ConcertoClient.LOGGER.warn("Connection Reset: Trying reconnecting to " + this.url);
+        ConcertoClient.LOGGER.warn("Connection Reset: Trying reconnecting to {}", this.url);
         try {
             this.disconnect();
             this.connect();

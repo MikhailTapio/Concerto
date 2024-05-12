@@ -8,21 +8,21 @@ import top.gregtao.concerto.api.WithMetaData;
 import top.gregtao.concerto.config.MusicCacheManager;
 import top.gregtao.concerto.music.lyrics.Lyrics;
 import top.gregtao.concerto.music.meta.music.MusicMetaData;
+import top.gregtao.concerto.util.FileUtil;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public abstract class Music implements JsonParsable<Music>, LazyLoadable, WithMetaData {
 
     private boolean isMetaLoaded = false;
     private MusicMetaData musicMetaData = null;
 
-    public MusicSource getMusicSourceOrNull() {
+    public InputStream getMusicSourceOrNull() {
         if (this instanceof CacheableMusic cacheable) {
             File child = MusicCacheManager.INSTANCE.getChild(cacheable);
             try {
-                return child == null ? this.getMusicSource() : MusicSource.of(child);
-            } catch (MusicSourceNotFoundException e) {
+                return child == null ? this.getMusicSource() : FileUtil.createBuffered(new FileInputStream(child));
+            } catch (MusicSourceNotFoundException | FileNotFoundException e) {
                 return null;
             }
         } else {
@@ -59,5 +59,5 @@ public abstract class Music implements JsonParsable<Music>, LazyLoadable, WithMe
         return this.isMetaLoaded;
     }
 
-    public abstract MusicSource getMusicSource() throws MusicSourceNotFoundException;
+    public abstract InputStream getMusicSource() throws MusicSourceNotFoundException;
 }

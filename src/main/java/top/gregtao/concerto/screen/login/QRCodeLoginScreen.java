@@ -32,7 +32,9 @@ public class QRCodeLoginScreen extends ConcertoScreen {
     private final boolean isSpecificImage;
     private URLImageWidget urlImageWidget;
 
-    public QRCodeLoginScreen(Supplier<String> qrKeySupplier, Function<String, String> qrCodeLinkGetter, Function<URL, byte[]> imageUpdater, Function<String, Status> statusUpdater, boolean isSpecificImage, int width, int height, Text title, Screen parent) {
+    public QRCodeLoginScreen(Supplier<String> qrKeySupplier, Function<String, String> qrCodeLinkGetter,
+                             Function<URL, byte[]> imageUpdater, Function<String, Status> statusUpdater,
+                             boolean isSpecificImage, int width, int height, Text title, Screen parent) {
         super(Text.literal(Text.translatable("concerto.screen.login").getString() + title.getString()), parent);
         this.qrKeySupplier = qrKeySupplier;
         this.qrCodeLinkGetter = qrCodeLinkGetter;

@@ -21,17 +21,20 @@ public class NeteaseCloudUserScreen extends PageScreen {
     private MetadataListWidget<NeteaseCloudPlaylist> playlistList;
 
     private <T extends WithMetaData> MetadataListWidget<T> initWidget() {
-        MetadataListWidget<T> widget = new MetadataListWidget<>(this.width, this.height - 55, 20, 18,
-                entry -> MinecraftClient.getInstance().setScreen(new PlaylistPreviewScreen((Playlist) entry.item, this))
-        );
-        return widget;
+        return new MetadataListWidget<>(this.width, this.height - 55, 20, 18) {
+            @Override
+            public void onDoubleClicked(ConcertoListWidget<T>.Entry entry) {
+                MinecraftClient.getInstance().setScreen(new PlaylistPreviewScreen((Playlist) entry.item, NeteaseCloudUserScreen.this));
+            }
+        };
     }
 
     public NeteaseCloudUserScreen(Screen parent) {
         super(Text.translatable("concerto.screen.user"), parent);
     }
 
-    private void onPageTurned(int page) {
+    @Override
+    public void onPageTurned(int page) {
         MusicPlayer.run(() -> {
             if (NeteaseCloudApiClient.LOCAL_USER.updateLoginStatus()) {
                 this.playlistList.reset(NeteaseCloudApiClient.LOCAL_USER.getUserPlaylists(page), null);
@@ -45,8 +48,6 @@ public class NeteaseCloudUserScreen extends PageScreen {
 
     @Override
     protected void init() {
-        this.configure(this::onPageTurned, this.width / 2 - 120, this.height - 30);
-
         super.init();
         if (!this.loggedIn()) {
             MinecraftClient.getInstance().setScreen(new NeteaseCloudLoginScreens(null));

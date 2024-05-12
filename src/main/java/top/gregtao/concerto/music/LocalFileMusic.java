@@ -32,8 +32,12 @@ public class LocalFileMusic extends PathFileMusic {
     }
 
     @Override
-    public MusicSource getMusicSource() {
-        return MusicSource.of(new File(this.getRawPath()));
+    public InputStream getMusicSource() {
+        try {
+            return new FileInputStream(this.getRawPath());
+        } catch (FileNotFoundException e) {
+            throw new MusicSourceNotFoundException(e);
+        }
     }
 
     @Override

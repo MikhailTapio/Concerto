@@ -36,23 +36,25 @@ public class QQMusicSearchScreen extends PageScreen {
     private SearchType searchType = SearchType.MUSIC;
 
     private <T extends WithMetaData> MetadataListWidget<T> initListsWidget() {
-        MetadataListWidget<T> widget = new MetadataListWidget<>(this.width, this.height - 75, 40, 18, entry -> {
-            try {
-                switch (this.searchType) {
-                    case MUSIC: {
-                        MusicPlayer.INSTANCE.addMusicHere((Music) entry.item, true);
-                        break;
+        return new MetadataListWidget<>(this.width, this.height - 75, 40, 18) {
+            @Override
+            public void onDoubleClicked(ConcertoListWidget<T>.Entry entry) {
+                try {
+                    switch (QQMusicSearchScreen.this.searchType) {
+                        case MUSIC: {
+                            MusicPlayer.INSTANCE.addMusicHere((Music) entry.item, true);
+                            break;
+                        }
+                        case PLAYLIST, ALBUM: {
+                            MinecraftClient.getInstance().setScreen(new PlaylistPreviewScreen((Playlist) entry.item, QQMusicSearchScreen.this));
+                            break;
+                        }
                     }
-                    case PLAYLIST, ALBUM: {
-                        MinecraftClient.getInstance().setScreen(new PlaylistPreviewScreen((Playlist) entry.item, this));
-                        break;
-                    }
+                } catch (ClassCastException e) {
+                    ConcertoClient.LOGGER.error(e.getMessage());
                 }
-            } catch (ClassCastException e) {
-                ConcertoClient.LOGGER.error(e.getMessage());
             }
-        });
-        return widget;
+        };
     }
 
     public QQMusicSearchScreen(Screen parent) {
@@ -88,9 +90,12 @@ public class QQMusicSearchScreen extends PageScreen {
     }
 
     @Override
-    protected void init() {
-        this.configure(page -> this.search(this.searchBox.getText(), page), this.width / 2 - 120, this.height - 30);
+    public void onPageTurned(int page) {
+        this.search(this.searchBox.getText(), page);
+    }
 
+    @Override
+    protected void init() {
         super.init();
         this.musicList = this.initListsWidget();
         this.playlistList = this.initListsWidget();
