@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocalFileMusic extends PathFileMusic {
-    public static List<String> FORMATS = List.of("mp3", "ogg", "wav", "flac", "aac");
+    public static List<String> FORMATS = List.of("mp3", "ogg", "wav", "flac", "aac", "m4s");
 
     public LocalFileMusic(String rawPath) {
         super(new File(rawPath).getAbsolutePath());
@@ -34,7 +34,7 @@ public class LocalFileMusic extends PathFileMusic {
     @Override
     public InputStream getMusicSource() {
         try {
-            return new FileInputStream(this.getRawPath());
+            return FileUtil.createBuffered(new FileInputStream(this.getRawPath()));
         } catch (FileNotFoundException e) {
             throw new MusicSourceNotFoundException(e);
         }
