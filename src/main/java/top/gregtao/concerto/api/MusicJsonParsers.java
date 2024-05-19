@@ -8,6 +8,7 @@ import top.gregtao.concerto.music.HttpFileMusic;
 import top.gregtao.concerto.music.LocalFileMusic;
 import top.gregtao.concerto.music.Music;
 import top.gregtao.concerto.music.meta.music.MusicMetaData;
+import top.gregtao.concerto.music.parser.BilibiliMusicJsonParser;
 import top.gregtao.concerto.music.parser.NeteaseCloudMusicJsonParser;
 import top.gregtao.concerto.music.parser.PathFileMusicJsonParser;
 import top.gregtao.concerto.music.parser.QQMusicJsonParser;
@@ -43,6 +44,8 @@ public class MusicJsonParsers {
     public static final JsonParser<Music> NETEASE_CLOUD = registerMusicParser(new NeteaseCloudMusicJsonParser());
 
     public static final JsonParser<Music> QQ_MUSIC = registerMusicParser(new QQMusicJsonParser());
+
+    public static final JsonParser<Music> BILIBILI = registerMusicParser(new BilibiliMusicJsonParser());
 
     // =================================================================================================================
     // Meta parsers

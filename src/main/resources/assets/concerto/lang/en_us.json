@@ -1,6 +1,7 @@
 {
   "concerto.source.netease_cloud": "Netease Cloud",
   "concerto.source.qq_music": "QQ Music",
+  "concerto.source.bilibili": "Bilibili",
   "concerto.source.local_file": "Local File",
   "concerto.source.internet": "Internet",
 
@@ -96,6 +97,7 @@
   "concerto.screen.add.netease_cloud.playlist": "NeteaseCloud Playlist:",
   "concerto.screen.add.netease_cloud.album": "NeteaseCloud Album:",
   "concerto.screen.add.qq": "QQ Music(MID):",
+  "concerto.screen.add.bilibili": "Bilibili(bvid):",
 
   "concerto.screen.login": "Login: ",
   "concerto.screen.login.username": "Username/Phone/Email:",

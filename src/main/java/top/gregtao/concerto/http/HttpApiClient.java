@@ -28,7 +28,7 @@ public class HttpApiClient {
     public HttpApiClient(String name, Map<String, String> defaultHeaders, Map<String, List<String>> initCookies) {
         this.name = name;
         this.logger = LoggerFactory.getLogger(name.toUpperCase() + " HTTP Client");
-        System.setProperty("jdk.httpclient.allowRestrictedHeaders", "Host,Referer,User-Agent");
+        System.setProperty("jdk.httpclient.allowRestrictedHeaders", "Referer,User-Agent");
         this.cookieFile = new CookieFile(name);
         this.cookieManager = new CookieManager();
         this.cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);

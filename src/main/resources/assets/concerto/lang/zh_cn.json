@@ -1,6 +1,7 @@
 {
   "concerto.source.netease_cloud": "网易云",
   "concerto.source.qq_music": "QQ音乐",
+  "concerto.source.bilibili": "哔哩哔哩",
   "concerto.source.local_file": "本地文件",
   "concerto.source.internet": "网络资源",
 
@@ -96,6 +97,7 @@
   "concerto.screen.add.netease_cloud.playlist": "网易云歌单:",
   "concerto.screen.add.netease_cloud.album": "网易云专辑:",
   "concerto.screen.add.qq": "QQ音乐（MID）:",
+  "concerto.screen.add.bilibili": "B站（BV号）",
 
   "concerto.screen.login": "登录到: ",
   "concerto.screen.login.username": "用户名/手机号/邮箱:",

@@ -36,7 +36,6 @@ public class NeteaseCloudApiClient extends HttpApiClient {
     public static String APP_VERSION = "3.0.0.Beta";
     public static Map<String, String> HEADERS = Map.of(
             "Referer", "https://music.163.com",
-            "Host", "music.163.com",
             "User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 Chrome/91.0.4472.164 NeteaseMusicDesktop/" + APP_VERSION
     );
     public static List<String> INIT_COOKIES = List.of("appver=" + APP_VERSION, "os=pc");

@@ -28,12 +28,12 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
 
     public static MusicPlayer INSTANCE = new MusicPlayer(new SilentLogger("player"));
 
+//    public static MusicPlayer INSTANCE = new MusicPlayer();
+
     public static void resetInstance() {
         INSTANCE.reset();
         INSTANCE = new MusicPlayer(new SilentLogger("player"));
     }
-
-//    public static MusicPlayer INSTANCE = new MusicPlayer();
 
     public boolean forcePaused = false;
 

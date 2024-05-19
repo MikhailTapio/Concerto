@@ -7,7 +7,9 @@ public enum Sources implements SimpleStringIdentifiable {
     LOCAL_FILE,
     INTERNET,
     NETEASE_CLOUD,
-    QQ_MUSIC;
+    QQ_MUSIC,
+    BILIBILI
+    ;
 
     public Text getName() {
         return Text.translatable(this.getKey("source"));
