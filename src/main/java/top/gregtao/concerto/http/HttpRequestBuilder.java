@@ -54,7 +54,7 @@ public class HttpRequestBuilder {
     }
 
     public HttpRequestBuilder setHeaders(Map<String, String> map) {
-        map.forEach(this.builder::setHeader);
+        map.forEach(this::setHeader);
         return this;
     }
 

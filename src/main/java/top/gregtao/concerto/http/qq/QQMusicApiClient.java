@@ -32,19 +32,19 @@ public class QQMusicApiClient extends HttpApiClient {
     public static final QQMusicUser LOCAL_USER = new QQMusicUser(INSTANCE);
 
     public QQMusicApiClient() {
-        super(Sources.QQ_MUSIC.name(), Map.of("Referer", "http://y.qq.com", "Host", "y.qq.com"), Map.of());
+        super(Sources.QQ_MUSIC.name(), Map.of("Referer", "http://y.qq.com"), Map.of());
     }
 
     public HttpRequestBuilder openUApi() {
-        return this.open().addFixedHeaders(Map.of("Referer", "http://u.y.qq.com", "Host", "u.y.qq.com"));
+        return this.open().addFixedHeaders(Map.of("Referer", "http://u.y.qq.com"));
     }
 
     public HttpRequestBuilder openCApi() {
-        return this.open().addFixedHeaders(Map.of("Referer", "http://c.y.qq.com", "Host", "c.y.qq.com"));
+        return this.open().addFixedHeaders(Map.of("Referer", "http://c.y.qq.com"));
     }
 
     public HttpRequestBuilder openQQLoginApi() {
-        return this.open().addFixedHeaders(Map.of("Referer", "https://ssl.ptlogin2.qq.com", "Host", "ssl.ptlogin2.qq.com"));
+        return this.open().addFixedHeaders(Map.of("Referer", "https://ssl.ptlogin2.qq.com"));
     }
 
     public String generateGuid() {
@@ -210,7 +210,7 @@ public class QQMusicApiClient extends HttpApiClient {
 
     public void authorizeQQLogin() throws IOException, URISyntaxException {
         String url = "https://graph.qq.com/oauth2.0/authorize";
-        HttpResponse<String> response = this.open().addFixedHeader("Host", "graph.qq.com").setFixedReferer("https://graph.qq.com").url(url).post(
+        HttpResponse<String> response = this.open().setFixedReferer("https://graph.qq.com").url(url).post(
                 HttpResponse.BodyHandlers.ofString(),
                 HttpRequestBuilder.ContentType.FORM,
                 "response_type=code&client_id=100497308&redirect_uri=https%3A%2F%2Fy.qq.com%2Fportal%2Fwx_redirect.html%3Flogin_type%3D1%26surl%3Dhttps%3A%2F%2Fy.qq.com%2F&scope=get_user_info%2Cget_app_friends&state=state&switch=&from_ptlogin=1&src=1&update_auth=1&openapi=80901010&g_tk=" + this.getQQLoginGTK() + "&auth_time=" + TextUtil.getCurrentTime() + "&ui=" + this.getQQLoginUi()

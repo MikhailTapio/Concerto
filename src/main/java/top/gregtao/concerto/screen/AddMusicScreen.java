@@ -61,7 +61,7 @@ public class AddMusicScreen extends ConcertoScreen {
                 str -> MusicPlayer.INSTANCE.addMusicHere(new QQMusic(str), true, () -> {
                     if (!MusicPlayer.INSTANCE.started) MusicPlayer.INSTANCE.start();
                 }));
-        this.addLabel(Text.translatable("concerto.screen.add.bilibli"), this.width / 2, 195,
+        this.addLabel(Text.translatable("concerto.screen.add.bilibili"), this.width / 2, 195,
                 str -> MusicPlayer.INSTANCE.addMusicHere(new BilibiliMusic(str), true));
     }
 
