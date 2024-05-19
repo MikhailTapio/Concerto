@@ -37,6 +37,7 @@ public class HttpURLInputStream extends InputStream {
     private HttpURLConnection openNewConnection() throws IOException {
         HttpURLConnection conn = (HttpURLConnection) this.url.openConnection();
         conn.setConnectTimeout(5000);
+        conn.setReadTimeout(5000);
         conn.setRequestMethod("GET");
         return conn;
     }
