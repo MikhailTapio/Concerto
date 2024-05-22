@@ -57,6 +57,8 @@ public class GeneralPlaylistScreen extends ConcertoScreen {
             ConcertoListWidget<Music>.Entry entry = this.widget.getSelectedOrNull();
             if (entry != null) {
                 MusicPlayer.INSTANCE.skipTo(entry.index);
+            } else if (!MusicPlayer.INSTANCE.started) {
+                MusicPlayer.INSTANCE.start();
             }
         }).position(this.width / 2 - 135, this.height - 30).size(50, 20).build());
 

@@ -128,6 +128,7 @@ public class MusicCommand {
                     MusicPlayer.INSTANCE.reloadConfig(() ->
                             TextUtil.commandMessageClient(context, Text.translatable("concerto.player.reload")));
                     ClientConfig.INSTANCE.readOptions();
+                    MusicPlayer.resetInstance();
                     return 0;
                 })
         ).then(

@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -33,6 +35,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
     public static void resetInstance() {
         INSTANCE.reset();
         INSTANCE = new MusicPlayer(new SilentLogger("player"));
+//        INSTANCE = new MusicPlayer();
     }
 
     public boolean forcePaused = false;
@@ -53,12 +56,14 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
         this.addStreamPlayerListener(this);
     }
 
+    public static final Executor RUNNERS_POOL = Executors.newFixedThreadPool(16);
+
     public static void run(Runnable runnable) {
-        CompletableFuture.runAsync(runnable);
+        CompletableFuture.runAsync(runnable, RUNNERS_POOL);
     }
 
     public static void run(Runnable runnable, Runnable callback) {
-        CompletableFuture.runAsync(runnable).thenRunAsync(callback);
+        CompletableFuture.runAsync(runnable, RUNNERS_POOL).thenRunAsync(callback, RUNNERS_POOL);
     }
 
     public void addMusic(Music music) {
@@ -210,6 +215,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
                     InputStream source;
                     ClientPlayerEntity player = MinecraftClient.getInstance().player;
                     while ((source = music.getMusicSourceOrNull()) == null) {
+                        ConcertoClient.LOGGER.error("Unable to play music: '{}' of '{}'", music.getMeta().title(), music.getMeta().author());
                         if (player != null) {
                             player.sendMessage(Text.translatable(
                                     "concerto.player.unable", music.getMeta().title(), music.getMeta().author()));
