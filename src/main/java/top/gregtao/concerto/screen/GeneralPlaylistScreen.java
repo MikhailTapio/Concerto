@@ -41,6 +41,7 @@ public class GeneralPlaylistScreen extends ConcertoScreen {
         this.searchBox = new TextFieldWidget(this.textRenderer, this.width / 2 - 185, 18, 300, 18,
                 this.searchBox, Text.translatable("concerto.screen.search"));
         this.addSelectableChild(this.searchBox);
+        this.addDrawableChild(this.searchBox);
 
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("concerto.screen.search"), button ->
                 this.toggleSearch()).position(this.width / 2 + 125, 17).size(50, 20).build());
@@ -97,7 +98,6 @@ public class GeneralPlaylistScreen extends ConcertoScreen {
     @Override
     public void render(DrawContext matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
-        this.searchBox.render(matrices, mouseX, mouseY, delta);
         this.widget.render(matrices, mouseX, mouseY, delta);
     }
 

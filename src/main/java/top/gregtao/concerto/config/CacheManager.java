@@ -46,7 +46,7 @@ public class CacheManager {
         return size;
     }
 
-    // Those codes suck, I will rewrite
+    // TODO: Those codes suck, I will rewrite
     public void removeEarliest() {
         File[] files = this.folder.listFiles();
         if (files == null) return;

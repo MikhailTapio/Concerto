@@ -1,7 +1,6 @@
 package top.gregtao.concerto.screen.login;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -20,7 +19,6 @@ public class PasswordLoginScreen extends ConcertoScreen {
     private boolean showPassword = true;
     private final BiFunction<String, String, Text> loginHandler;
     private final Supplier<Boolean> loginChecker;
-    private Text message = Text.empty();
 
     public PasswordLoginScreen(Supplier<Boolean> loginChecker, BiFunction<String, String, Text> loginHandler, Text title, Screen parent) {
         super(Text.literal(Text.translatable("concerto.screen.login").getString() + title.getString()), parent);
@@ -33,12 +31,14 @@ public class PasswordLoginScreen extends ConcertoScreen {
         super.init();
         this.usernameField = new TextFieldWidget(this.textRenderer, this.width / 2 - 30, 20, 155, 20, Text.empty());
         this.addSelectableChild(this.usernameField);
+        this.addDrawableChild(this.usernameField);
         TextWidget textWidget = new TextWidget(this.width / 2 - 120, 22, 90, 20, Text.translatable("concerto.screen.login.username"), this.textRenderer);
         textWidget.alignLeft();
         this.addDrawableChild(textWidget);
 
         this.passwordField = new TextFieldWidget(this.textRenderer, this.width / 2 - 30, 50, 90, 20, Text.empty());
         this.addSelectableChild(this.passwordField);
+        this.addDrawableChild(this.passwordField);
         TextWidget textWidget1 = new TextWidget(this.width / 2 - 120, 52, 90, 20, Text.translatable("concerto.screen.login.password"), this.textRenderer);
         textWidget1.alignLeft();
         this.addDrawableChild(textWidget1);
@@ -62,9 +62,9 @@ public class PasswordLoginScreen extends ConcertoScreen {
     public void tryLogin() {
         String username = this.usernameField.getText().trim(), password = this.passwordField.getText().trim();
         if (username.isEmpty() || password.isEmpty()) {
-            this.message = Text.translatable("concerto.screen.login.empty");
+            this.displayAlert(Text.translatable("concerto.screen.login.empty"));
         } else {
-            this.message = this.loginHandler.apply(username, password);
+            this.displayAlert(this.loginHandler.apply(username, password));
         }
     }
 
@@ -78,13 +78,5 @@ public class PasswordLoginScreen extends ConcertoScreen {
             }
             MinecraftClient.getInstance().setScreen(null);
         }
-    }
-
-    @Override
-    public void render(DrawContext matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
-        this.usernameField.render(matrices, mouseX, mouseY, delta);
-        this.passwordField.render(matrices, mouseX, mouseY, delta);
-        matrices.drawCenteredTextWithShadow(this.textRenderer, this.message, this.width / 2, 120, 0xffffffff);
     }
 }

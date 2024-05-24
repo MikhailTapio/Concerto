@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
+import top.gregtao.concerto.ConcertoClient;
 import top.gregtao.concerto.api.*;
 import top.gregtao.concerto.music.lyrics.DefaultFormatLyrics;
 import top.gregtao.concerto.music.lyrics.Lyrics;
@@ -22,12 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocalFileMusic extends PathFileMusic {
-    public static List<String> FORMATS = List.of("mp3", "ogg", "wav", "flac", "aac", "m4s");
+    public static List<String> FORMATS = List.of("mp3", "ogg", "wav", "flac", "aac");
 
-    public LocalFileMusic(String rawPath) {
-        super(new File(rawPath).getAbsolutePath());
-        if (!FORMATS.contains(HttpUtil.getSuffix(rawPath))) {
-            throw new UnsafeMusicException("Unsupported source");
+    public LocalFileMusic(String rawPath) throws UnsafeMusicException {
+        super(rawPath.charAt(0) == '"' && rawPath.charAt(rawPath.length() - 1) == '"' ?
+                rawPath.substring(1, rawPath.length() - 1) : rawPath);
+        String suffix = HttpUtil.getSuffix(this.getRawPath()).substring(1);
+        if (!FORMATS.contains(suffix)) {
+            ConcertoClient.LOGGER.warn("Unsupported source: {}", suffix);
+            throw new UnsafeMusicException("Unsupported source: " + suffix);
         }
     }
 

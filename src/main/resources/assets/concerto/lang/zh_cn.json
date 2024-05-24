@@ -161,5 +161,7 @@
   "concerto.room.join.fail": "加入该音乐室失败",
   "concerto.room.quit": "退出了该音乐室: %s",
   "concerto.room.quit.fail": "退出该音乐室失败",
-  "concerto.room.update.fail": "更新音乐室相关信息失败"
+  "concerto.room.update.fail": "更新音乐室相关信息失败",
+
+  "concerto.error.invalid_path": "不可用的路径或文件格式"
 }
