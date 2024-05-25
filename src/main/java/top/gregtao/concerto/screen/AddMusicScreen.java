@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-public class AddMusicScreen extends ConcertoScreen {
+public class AddMusicScreen extends ApplyDraggedFileScreen {
 
     public AddMusicScreen(Screen parent) {
         super(Text.translatable("concerto.screen.manual_add"), parent);

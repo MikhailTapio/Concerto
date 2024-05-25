@@ -15,7 +15,7 @@ import top.gregtao.concerto.player.MusicPlayerHandler;
 import top.gregtao.concerto.screen.widget.ConcertoListWidget;
 import top.gregtao.concerto.screen.widget.GeneralPlaylistWidget;
 
-public class GeneralPlaylistScreen extends ConcertoScreen {
+public class GeneralPlaylistScreen extends ApplyDraggedFileScreen {
     private GeneralPlaylistWidget widget;
     protected TextFieldWidget searchBox;
 

@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
 import top.gregtao.concerto.ConcertoClient;
 import top.gregtao.concerto.api.*;
 import top.gregtao.concerto.music.lyrics.DefaultFormatLyrics;
@@ -16,6 +17,8 @@ import top.gregtao.concerto.util.FileUtil;
 import top.gregtao.concerto.util.HttpUtil;
 import top.gregtao.concerto.util.TextUtil;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,9 +41,11 @@ public class LocalFileMusic extends PathFileMusic {
     @Override
     public InputStream getMusicSource() {
         try {
-            return FileUtil.createBuffered(new FileInputStream(this.getRawPath()));
+            return AudioSystem.getAudioInputStream(new File(this.getRawPath()));
         } catch (FileNotFoundException e) {
             throw new MusicSourceNotFoundException(e);
+        } catch (UnsupportedAudioFileException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -55,7 +60,8 @@ public class LocalFileMusic extends PathFileMusic {
         String author, title;
         try {
             AudioFile file = AudioFileIO.read(new File(this.getRawPath()));
-            title = file.getTag().getFirst(FieldKey.TITLE);
+            Tag tag = file.getTagAndConvertOrCreateDefault();
+            title = tag.getFirst(FieldKey.TITLE);
             author = FileUtil.getLocalAudioAuthors(file);
         } catch (Exception e) {
             author = title = null;
