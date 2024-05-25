@@ -14,6 +14,7 @@
   "concerto.refresh": "Refresh",
   "concerto.success": "Success",
   "concerto.not_cacheable": "Not cacheable",
+  "concerto.drag_confirm": "Do you want to add the following files/folders to Concerto?",
 
   "concerto.playlist": "Playlist",
   "concerto.album": "Album",
@@ -161,5 +162,7 @@
   "concerto.room.join.fail": "Failed to join the music room",
   "concerto.room.quit": "Quited the music room: %s",
   "concerto.room.quit.fail": "Failed to quit the music room",
-  "concerto.room.update.fail": "Failed to update detailed information of music room"
+  "concerto.room.update.fail": "Failed to update detailed information of music room",
+
+  "concerto.error.invalid_path": "Invalid path or file format"
 }

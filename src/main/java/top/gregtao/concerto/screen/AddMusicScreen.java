@@ -1,7 +1,6 @@
 package top.gregtao.concerto.screen;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -14,11 +13,9 @@ import top.gregtao.concerto.player.MusicPlayerHandler;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
-public class AddMusicScreen extends ConcertoScreen {
-    private final List<TextFieldWidget> textFields = new ArrayList<>();
+public class AddMusicScreen extends ApplyDraggedFileScreen {
 
     public AddMusicScreen(Screen parent) {
         super(Text.translatable("concerto.screen.manual_add"), parent);
@@ -29,18 +26,24 @@ public class AddMusicScreen extends ConcertoScreen {
         widget.setMaxLength(1024);
         TextWidget textWidget = new TextWidget(centerX - 120, y + 2, 90, 20, text, this.textRenderer);
         textWidget.alignLeft();
+        this.addDrawableChild(widget);
         this.addDrawableChild(textWidget);
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("concerto.screen.add"),
                 button -> onClick.accept(widget.getText())).position(centerX + 65, y).size(60, 20).build());
         this.addSelectableChild(widget);
-        this.textFields.add(widget);
     }
 
     @Override
     protected void init() {
         super.init();
         this.addLabel(Text.translatable("concerto.screen.add.local_file"), this.width / 2, 20,
-                str -> MusicPlayer.INSTANCE.addMusicHere(new LocalFileMusic(str), true));
+                str -> {
+                    try {
+                        MusicPlayer.INSTANCE.addMusicHere(new LocalFileMusic(str), true);
+                    } catch (UnsafeMusicException e) {
+                        this.displayAlert(Text.translatable("concerto.error.invalid_path"));
+                    }
+                });
         this.addLabel(Text.translatable("concerto.screen.add.local_file.folder"), this.width / 2, 45, str -> MusicPlayer.run(() -> {
             ArrayList<Music> list = LocalFileMusic.getMusicsInFolder(new File(str));
             MusicPlayer.INSTANCE.addMusic(list, () -> MusicPlayer.INSTANCE.skipTo(MusicPlayerHandler.INSTANCE.getMusicList().size() - list.size()));
@@ -63,11 +66,5 @@ public class AddMusicScreen extends ConcertoScreen {
                 }));
         this.addLabel(Text.translatable("concerto.screen.add.bilibili"), this.width / 2, 195,
                 str -> MusicPlayer.INSTANCE.addMusicHere(new BilibiliMusic(str), true));
-    }
-
-    @Override
-    public void render(DrawContext matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
-        this.textFields.forEach(widget -> widget.render(matrices, mouseX, mouseY, delta));
     }
 }

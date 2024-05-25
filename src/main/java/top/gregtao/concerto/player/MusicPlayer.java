@@ -70,6 +70,10 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
         this.addMusic(music, () -> {});
     }
 
+    public void addMusic(List<Music> musics) {
+        this.addMusic(musics, () -> {});
+    }
+
     public void addMusic(Music music, Runnable callback) {
         run(() -> MusicPlayerHandler.INSTANCE.addMusic(music), callback);
     }

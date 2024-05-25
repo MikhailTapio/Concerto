@@ -13,7 +13,7 @@ public class FileUtil {
 
     public static String getLocalAudioAuthors(AudioFile file) {
         try {
-            Tag tag = file.getTag();
+            Tag tag = file.getTagAndConvertOrCreateDefault();
             List<String> list = new ArrayList<>();
             list.add(getTagValueOrElse(tag, FieldKey.ARTISTS, ""));
             list.add(getTagValueOrElse(tag, FieldKey.ARTIST, ""));
