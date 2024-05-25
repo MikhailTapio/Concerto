@@ -13,12 +13,11 @@ import top.gregtao.concerto.music.lyrics.DefaultFormatLyrics;
 import top.gregtao.concerto.music.lyrics.Lyrics;
 import top.gregtao.concerto.music.meta.music.BasicMusicMetaData;
 import top.gregtao.concerto.enums.Sources;
+import top.gregtao.concerto.music.meta.music.TimelessMusicMetaData;
 import top.gregtao.concerto.util.FileUtil;
 import top.gregtao.concerto.util.HttpUtil;
 import top.gregtao.concerto.util.TextUtil;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,9 +28,9 @@ public class LocalFileMusic extends PathFileMusic {
     public static List<String> FORMATS = List.of("mp3", "ogg", "wav", "flac", "aac");
 
     public LocalFileMusic(String rawPath) throws UnsafeMusicException {
-        super(rawPath.charAt(0) == '"' && rawPath.charAt(rawPath.length() - 1) == '"' ?
-                rawPath.substring(1, rawPath.length() - 1) : rawPath);
-        String suffix = HttpUtil.getSuffix(this.getRawPath()).substring(1);
+        super(new File(rawPath.charAt(0) == '"' && rawPath.charAt(rawPath.length() - 1) == '"' ?
+                rawPath.substring(1, rawPath.length() - 1) : rawPath).getAbsolutePath());
+        String suffix = HttpUtil.getSuffix(this.getRawPath()).substring(1).toLowerCase();
         if (!FORMATS.contains(suffix)) {
             ConcertoClient.LOGGER.warn("Unsupported source: {}", suffix);
             throw new UnsafeMusicException("Unsupported source: " + suffix);
@@ -41,10 +40,12 @@ public class LocalFileMusic extends PathFileMusic {
     @Override
     public InputStream getMusicSource() {
         try {
-            return AudioSystem.getAudioInputStream(new File(this.getRawPath()));
+            InputStream stream = new BufferedInputStream(new FileInputStream(this.getRawPath()));
+            byte[] bytes = stream.readAllBytes();
+            return new ByteArrayInputStream(bytes);
         } catch (FileNotFoundException e) {
             throw new MusicSourceNotFoundException(e);
-        } catch (UnsupportedAudioFileException | IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -66,12 +67,21 @@ public class LocalFileMusic extends PathFileMusic {
         } catch (Exception e) {
             author = title = null;
         }
-        this.setMusicMeta(new BasicMusicMetaData(
-                author == null || author.isEmpty() ? TextUtil.getTranslatable("concerto.unknown") : author,
-                title == null || title.isEmpty() ? this.getRawPath() : title,
-                Sources.LOCAL_FILE.getName().getString(),
-                TimeTool.durationInMilliseconds(new File(this.getRawPath()).getAbsolutePath(), AudioType.FILE)
-        ));
+        long duration = TimeTool.durationInMilliseconds(new File(this.getRawPath()).getAbsolutePath(), AudioType.FILE);
+        if (duration <= 0) {
+            this.setMusicMeta(new TimelessMusicMetaData(
+                    author == null || author.isEmpty() ? TextUtil.getTranslatable("concerto.unknown") : author,
+                    title == null || title.isEmpty() ? this.getRawPath() : title,
+                    Sources.LOCAL_FILE.getName().getString()
+            ));
+        } else {
+            this.setMusicMeta(new BasicMusicMetaData(
+                    author == null || author.isEmpty() ? TextUtil.getTranslatable("concerto.unknown") : author,
+                    title == null || title.isEmpty() ? this.getRawPath() : title,
+                    Sources.LOCAL_FILE.getName().getString(),
+                    TimeTool.durationInMilliseconds(new File(this.getRawPath()).getAbsolutePath(), AudioType.FILE)
+            ));
+        }
         super.load();
     }
 

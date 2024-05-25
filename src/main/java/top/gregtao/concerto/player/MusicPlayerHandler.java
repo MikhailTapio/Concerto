@@ -195,10 +195,10 @@ public class MusicPlayerHandler {
         this.currentMeta = this.currentMusic.getMeta();
         try {
             Pair<Lyrics, Lyrics> lyrics = this.currentMusic.getLyrics();
-            this.currentLyrics = lyrics.getFirst();
-            this.currentSubLyrics = lyrics.getSecond();
-        } catch (Exception e) {
-            this.currentLyrics = null;
+            this.currentLyrics = (lyrics.getFirst() == null || lyrics.getFirst().isEmpty()) ? null : lyrics.getFirst();
+            this.currentSubLyrics = (lyrics.getSecond() == null || lyrics.getSecond().isEmpty()) ? null : lyrics.getSecond();
+        } catch (IOException e) {
+            this.currentLyrics = this.currentSubLyrics = null;
         }
         this.displayTexts[2] = "";
     }

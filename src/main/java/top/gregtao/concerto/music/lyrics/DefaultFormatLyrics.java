@@ -6,6 +6,10 @@ import top.gregtao.concerto.util.MathUtil;
 public class DefaultFormatLyrics extends Lyrics {
     @Override
     public void parse(String raw) {
+        raw = raw.trim();
+        if (raw.startsWith("[") && raw.endsWith("]")) {
+            raw = raw.substring(1, raw.length() - 1);
+        }
         String[] lines = raw.split("(\n|\r|\r\n)");
         for (String line : lines) {
             line = line.trim();
