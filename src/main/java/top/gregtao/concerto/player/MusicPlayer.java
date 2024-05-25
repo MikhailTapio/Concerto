@@ -29,9 +29,9 @@ import java.util.logging.Logger;
 
 public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
 
-    public static MusicPlayer INSTANCE = new MusicPlayer(new SilentLogger("player"));
+//    public static MusicPlayer INSTANCE = new MusicPlayer(new SilentLogger("player"));
 
-//    public static MusicPlayer INSTANCE = new MusicPlayer();
+    public static MusicPlayer INSTANCE = new MusicPlayer();
 
     public static void resetInstance() {
         try {
@@ -41,8 +41,8 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        INSTANCE = new MusicPlayer(new SilentLogger("player"));
-//        INSTANCE = new MusicPlayer();
+//        INSTANCE = new MusicPlayer(new SilentLogger("player"));
+        INSTANCE = new MusicPlayer();
     }
 
     public boolean forcePaused = false;
