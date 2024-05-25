@@ -28,8 +28,7 @@ public class LocalFileMusic extends PathFileMusic {
     public static List<String> FORMATS = List.of("mp3", "ogg", "wav", "flac", "aac");
 
     public LocalFileMusic(String rawPath) throws UnsafeMusicException {
-        super(new File(rawPath.charAt(0) == '"' && rawPath.charAt(rawPath.length() - 1) == '"' ?
-                rawPath.substring(1, rawPath.length() - 1) : rawPath).getAbsolutePath());
+        super(new File(TextUtil.trimSurrounding(rawPath, "\"", "\"")).getAbsolutePath());
         String suffix = HttpUtil.getSuffix(this.getRawPath()).substring(1).toLowerCase();
         if (!FORMATS.contains(suffix)) {
             ConcertoClient.LOGGER.warn("Unsupported source: {}", suffix);

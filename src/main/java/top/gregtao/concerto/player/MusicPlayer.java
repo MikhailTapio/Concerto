@@ -16,6 +16,7 @@ import top.gregtao.concerto.music.Music;
 import top.gregtao.concerto.network.MusicRoom;
 import top.gregtao.concerto.util.SilentLogger;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,13 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
 //    public static MusicPlayer INSTANCE = new MusicPlayer();
 
     public static void resetInstance() {
-        INSTANCE.reset();
+        try {
+            if (MusicPlayerHandler.INSTANCE.currentSource != null) {
+                MusicPlayerHandler.INSTANCE.currentSource.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         INSTANCE = new MusicPlayer(new SilentLogger("player"));
 //        INSTANCE = new MusicPlayer();
     }
