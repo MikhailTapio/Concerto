@@ -14,7 +14,6 @@ import top.gregtao.concerto.ConcertoClient;
 import top.gregtao.concerto.api.MusicJsonParsers;
 import top.gregtao.concerto.music.Music;
 import top.gregtao.concerto.network.MusicRoom;
-import top.gregtao.concerto.util.SilentLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,13 +24,29 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
 
-//    public static MusicPlayer INSTANCE = new MusicPlayer(new SilentLogger("player"));
+    public static MusicPlayer INSTANCE;
+    public static final Logger PLAYER_LOGGER;
 
-    public static MusicPlayer INSTANCE = new MusicPlayer();
+    static {
+        PLAYER_LOGGER = Logger.getLogger(MusicPlayer.class.getName());
+        FileHandler fileHandler;
+        try {
+            fileHandler = new FileHandler("Concerto/logs/player.log", false);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        fileHandler.setFormatter(new SimpleFormatter());
+        PLAYER_LOGGER.addHandler(fileHandler);
+        PLAYER_LOGGER.setLevel(Level.ALL);
+        resetInstance();
+    }
 
     public static void resetInstance() {
         try {
@@ -41,8 +56,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        INSTANCE = new MusicPlayer(new SilentLogger("player"));
-        INSTANCE = new MusicPlayer();
+        INSTANCE = new MusicPlayer(PLAYER_LOGGER);
     }
 
     public boolean forcePaused = false;
@@ -242,11 +256,12 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
                     MusicPlayerHandler.INSTANCE.currentSource = source;
                     this.open(source);
                     this.play();
+                    ConcertoClient.LOGGER.info("Start playing music: {}", music.getMeta().title());
                     MusicRoom.clientUpdate(music);
                     callback.accept(MusicPlayerHandler.INSTANCE.getCurrentIndex());
                 }
                 this.playNextLock = this.isPlayingTemp = this.forcePaused = false;
-            } catch (StreamPlayerException e) {
+            } catch (Exception e) {
                 this.started = this.isPlayingTemp = this.forcePaused = false;
                 throw new RuntimeException(e);
             }

@@ -7,6 +7,7 @@ import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
+import org.jflac.sound.spi.FlacAudioFileReader;
 import top.gregtao.concerto.ConcertoClient;
 import top.gregtao.concerto.api.*;
 import top.gregtao.concerto.music.lyrics.DefaultFormatLyrics;
@@ -18,6 +19,7 @@ import top.gregtao.concerto.util.FileUtil;
 import top.gregtao.concerto.util.HttpUtil;
 import top.gregtao.concerto.util.TextUtil;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,13 +41,17 @@ public class LocalFileMusic extends PathFileMusic {
     @Override
     public InputStream getMusicSource() {
         try {
-            InputStream stream = new BufferedInputStream(new FileInputStream(this.getRawPath()));
-            byte[] bytes = stream.readAllBytes();
-            return new ByteArrayInputStream(bytes);
-        } catch (FileNotFoundException e) {
-            throw new MusicSourceNotFoundException(e);
+            InputStream stream = FileUtil.createBuffered(new FileInputStream(this.getRawPath()));
+            try {
+                FlacAudioFileReader reader = new FlacAudioFileReader();
+                return reader.getAudioInputStream(stream);
+            } catch (UnsupportedAudioFileException e) {
+                return stream;
+            } catch (IOException e) {
+                return new ByteArrayInputStream(stream.readAllBytes());
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new MusicSourceNotFoundException(e);
         }
     }
 

@@ -30,7 +30,7 @@ dependencies {
 //	my("com.github.goxr3plus:java-stream-player:10.0.2") {
 //		exclude module: 'junit'
 //	}
-	my("com.github.gregtaoo:java-stream-player-forked:4120374666") {
+	my("com.github.gregtaoo:java-stream-player-forked:1505e8e577") {
 		exclude module: 'junit'
 	}
 	my 'com.google.zxing:core:3.3.0'
