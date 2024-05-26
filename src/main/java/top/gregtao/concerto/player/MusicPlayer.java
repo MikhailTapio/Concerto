@@ -1,10 +1,10 @@
 package top.gregtao.concerto.player;
 
-import com.goxr3plus.streamplayer.enums.Status;
-import com.goxr3plus.streamplayer.stream.StreamPlayer;
-import com.goxr3plus.streamplayer.stream.StreamPlayerEvent;
-import com.goxr3plus.streamplayer.stream.StreamPlayerException;
-import com.goxr3plus.streamplayer.stream.StreamPlayerListener;
+import top.gregtao.concerto.player.streamplayer.enums.Status;
+import top.gregtao.concerto.player.streamplayer.stream.StreamPlayer;
+import top.gregtao.concerto.player.streamplayer.stream.StreamPlayerEvent;
+import top.gregtao.concerto.player.streamplayer.stream.StreamPlayerException;
+import top.gregtao.concerto.player.streamplayer.stream.StreamPlayerListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
@@ -38,7 +38,7 @@ public class MusicPlayer extends StreamPlayer implements StreamPlayerListener {
         PLAYER_LOGGER = Logger.getLogger(MusicPlayer.class.getName());
         FileHandler fileHandler;
         try {
-            fileHandler = new FileHandler("Concerto/logs/player.log", false);
+            fileHandler = new FileHandler("Concerto/player.log", false);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

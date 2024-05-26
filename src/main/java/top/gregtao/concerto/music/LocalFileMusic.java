@@ -1,7 +1,5 @@
 package top.gregtao.concerto.music;
 
-import com.goxr3plus.streamplayer.enums.AudioType;
-import com.goxr3plus.streamplayer.tools.TimeTool;
 import com.mojang.datafixers.util.Pair;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -15,6 +13,8 @@ import top.gregtao.concerto.music.lyrics.Lyrics;
 import top.gregtao.concerto.music.meta.music.BasicMusicMetaData;
 import top.gregtao.concerto.enums.Sources;
 import top.gregtao.concerto.music.meta.music.TimelessMusicMetaData;
+import top.gregtao.concerto.player.streamplayer.enums.AudioType;
+import top.gregtao.concerto.player.streamplayer.tools.TimeTool;
 import top.gregtao.concerto.util.FileUtil;
 import top.gregtao.concerto.util.HttpUtil;
 import top.gregtao.concerto.util.TextUtil;
@@ -44,9 +44,10 @@ public class LocalFileMusic extends PathFileMusic {
             InputStream stream = FileUtil.createBuffered(new FileInputStream(this.getRawPath()));
             try {
                 FlacAudioFileReader reader = new FlacAudioFileReader();
-                return reader.getAudioInputStream(stream);
+                return FileUtil.createBuffered(reader.getAudioInputStream(stream));
             } catch (UnsupportedAudioFileException e) {
                 return stream;
+//                return new ByteArrayInputStream(stream.readAllBytes());
             } catch (IOException e) {
                 return new ByteArrayInputStream(stream.readAllBytes());
             }
